@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+
+    <color name="appBackground">#424242</color>
+    <color name="appText">@color/white</color>
+
+    <color name="colorPrimary">#2e7d32</color>
+    <color name="colorPrimaryText">@color/white</color>
+
+    <color name="colorPrimaryLight">#60ad5e</color>
+    <color name="colorPrimaryLightText">@color/black</color>
+
+    <color name="colorPrimaryDark">#005005</color>
+    <color name="colorPrimaryDarkText">@color/white</color>
+
+    <color name="colorSecondary">#37474f</color>
+    <color name="colorSecondaryText">@color/white</color>
+
+    <color name="colorSecondaryLight">#62727b</color>
+    <color name="colorSecondaryLightText">@color/white</color>
+
+    <color name="colorSecondaryDark">#102027</color>
+    <color name="colorSecondaryDarkText">@color/black</color>
+
+    <color name="colorAccent">@color/colorSecondary</color>
+</resources>
