@@ -23,6 +23,8 @@ public class EditPointActivity extends AppCompatActivity {
 
         db = AppDatabase.getAppDatabase(getApplicationContext());
 
+//        populateFields();
+
         setupSaveBtn();
     }
 
