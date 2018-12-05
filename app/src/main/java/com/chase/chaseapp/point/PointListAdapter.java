@@ -48,12 +48,11 @@ public class PointListAdapter extends BaseAdapter {
             view = LayoutInflater.from(context).inflate(R.layout.point_list_item, parent, false);
         }
 
-        Point point = points.get(position);
+        final Point point = points.get(position);
 
         TextView title = view.findViewById(R.id.titleText);
         TextView address = view.findViewById(R.id.addressText);
         RatingBar ratingBar = view.findViewById(R.id.ratingBar);
-
 
         title.setText(point.getTitle());
         address.setText(point.getAddress());
@@ -64,7 +63,10 @@ public class PointListAdapter extends BaseAdapter {
         pointLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, PointActivity.class);
+                Intent intent = new Intent(context.getApplicationContext(), PointActivity.class);
+
+                intent.putExtra("point", point);
+
                 context.startActivity(intent);
             }
         });

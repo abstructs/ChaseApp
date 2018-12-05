@@ -57,7 +57,7 @@ public class PointTaskAdapter extends BaseAdapter {
         editFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, EditTaskActivity.class);
+                Intent intent = new Intent(context.getApplicationContext(), EditTaskActivity.class);
 
                 context.startActivity(intent);
             }

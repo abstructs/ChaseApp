@@ -1,30 +1,97 @@
 package com.chase.chaseapp.point;
 
 import com.chase.chaseapp.R;
+
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+
+import database.AppDatabase;
+import entities.Point;
 
 public class AddPointActivity extends AppCompatActivity {
+
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_point);
 
+        db = AppDatabase.getAppDatabase(getApplicationContext());
+
+        setupSaveBtn();
+    }
+
+    private void setupSaveBtn() {
         Button saveBtn = findViewById(R.id.saveBtn);
-        EditText nameInput = findViewById(R.id.nameInput);
-        EditText addressInput = findViewById(R.id.addressInput);
-        Spinner tagSpinner = findViewById(R.id.tagSpinner);
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                if(formIsValid())
+                    savePointThenFinish(getPoint());
+                else
+                    showError();
             }
         });
+    }
+
+    private Point getPoint() {
+        EditText nameInput = findViewById(R.id.nameInput);
+        EditText addressInput = findViewById(R.id.addressInput);
+        Spinner tagSpinner = findViewById(R.id.tagSpinner);
+
+        final String name = nameInput.getText().toString();
+        final String address = addressInput.getText().toString();
+        final String tag = tagSpinner.getSelectedItem().toString();
+
+        Point point = new Point();
+
+        point.setTitle(name);
+        point.setRating(0);
+        point.setAddress(address);
+        point.setTag(tag);
+
+        return point;
+    }
+
+    private void showError() {
+        Toast.makeText(getApplicationContext(), "Please fill out the fields.",
+                Toast.LENGTH_LONG).show();
+    }
+
+    private void savePointThenFinish(final Point point) {
+        class InsertPoint extends AsyncTask<Void, Void, Boolean> {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                db.pointDao().insertOne(point);
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean res) {
+                finish();
+            }
+        }
+
+        new InsertPoint().execute();
+    }
+
+    private boolean formIsValid() {
+        EditText nameInput = findViewById(R.id.nameInput);
+        EditText addressInput = findViewById(R.id.addressInput);
+        Spinner tagSpinner = findViewById(R.id.tagSpinner);
+
+        return tagSpinner.getSelectedItemPosition() != 0 && nameInput.getText().length() != 0 &&
+                addressInput.getText().length() != 0;
     }
 }

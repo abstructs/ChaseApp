@@ -8,55 +8,78 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.chase.chaseapp.R;
 import com.chase.chaseapp.task.AddTaskActivity;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
+import database.AppDatabase;
+import entities.Point;
 import entities.Task;
 
 public class PointActivity extends AppCompatActivity {
+
+    private Point point;
+
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_point);
 
+        db = AppDatabase.getAppDatabase(getApplicationContext());
+
+        point = getIntent().getParcelableExtra("point");
+
+        setupActivity();
+    }
+
+    private void setupFields() {
+        TextView placeText = findViewById(R.id.placeText);
+        TextView addressText = findViewById(R.id.addressText);
+        TextView ratingText = findViewById(R.id.ratingText);
+
+        placeText.setText(point.getTitle());
+        addressText.setText(point.getAddress());
+        ratingText.setText(getRatingText());
+    }
+
+    private String getRatingText() {
+        switch(point.getRating()) {
+            case 1:
+                return "1 person rated this";
+            default:
+                return String.valueOf(point.getRating()) + " people rated this";
+        }
+    }
+
+    private void setupActivity() {
+        setupAddFab();
+        setupAddTaskBtn();
+        setupEditFab();
+        setupRatingBar();
+        setupShareFab();
+        setupViewFab();
+
+        setupFields();
+
+        populateTasks();
+    }
+
+    private void setupViewFab() {
         FloatingActionButton viewFab = findViewById(R.id.viewFab);
-        FloatingActionButton editFab = findViewById(R.id.editFab);
+    }
+
+    private void setupShareFab() {
         FloatingActionButton shareFab = findViewById(R.id.shareFab);
+    }
 
-        RatingBar ratingBar = findViewById(R.id.ratingBar);
-
-        Button addTaskBtn = findViewById(R.id.addTaskBtn);
-
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                System.out.print("Rated: ");
-                System.out.println(rating);
-                ratingBar.setRating(rating);
-            }
-        });
-
-        addTaskBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PointActivity.this, AddTaskActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        editFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PointActivity.this, EditPointActivity.class);
-                startActivity(intent);
-            }
-        });
-
-
+    private void populateTasks() {
         ListView taskList = findViewById(R.id.taskList);
 
         ArrayList<Task> tasks = new ArrayList<>();
@@ -75,5 +98,58 @@ public class PointActivity extends AppCompatActivity {
         PointTaskAdapter pointTaskAdapter = new PointTaskAdapter(PointActivity.this, tasks);
 
         taskList.setAdapter(pointTaskAdapter);
+    }
+
+    private void setupAddTaskBtn() {
+        Button addTaskBtn = findViewById(R.id.addTaskBtn);
+
+        addTaskBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PointActivity.this, AddTaskActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void setupAddFab() {
+
+    }
+
+    private void setupEditFab() {
+        FloatingActionButton editFab = findViewById(R.id.editFab);
+
+        editFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PointActivity.this, EditPointActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void setupRatingBar() {
+        RatingBar ratingBar = findViewById(R.id.ratingBar);
+
+        ratingBar.setRating(point.getRating());
+
+        ratingBar.setOnRatingBarChangeListener(getRatingListener());
+    }
+
+    private RatingBar.OnRatingBarChangeListener getRatingListener() {
+        RatingBar.OnRatingBarChangeListener listener = new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                if (fromUser) {
+                    ratingBar.setRating(rating);
+
+//                    db.
+
+//                    db
+                }
+            }
+        }
+
+        return listener;
     }
 }
