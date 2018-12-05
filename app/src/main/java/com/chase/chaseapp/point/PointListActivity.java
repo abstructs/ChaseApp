@@ -31,6 +31,13 @@ public class PointListActivity extends AppCompatActivity {
         populatePoints();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        populatePoints();
+    }
+
     private void populatePoints() {
         class GetPoints extends AsyncTask<Void, Void, ArrayList<Point>> {
             @Override

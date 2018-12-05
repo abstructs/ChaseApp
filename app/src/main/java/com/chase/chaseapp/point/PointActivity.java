@@ -1,6 +1,8 @@
 package com.chase.chaseapp.point;
 
+import android.arch.persistence.room.Update;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,20 +44,14 @@ public class PointActivity extends AppCompatActivity {
     private void setupFields() {
         TextView placeText = findViewById(R.id.placeText);
         TextView addressText = findViewById(R.id.addressText);
-        TextView ratingText = findViewById(R.id.ratingText);
+
 
         placeText.setText(point.getTitle());
         addressText.setText(point.getAddress());
-        ratingText.setText(getRatingText());
     }
 
     private String getRatingText() {
-        switch(point.getRating()) {
-            case 1:
-                return "1 person rated this";
-            default:
-                return String.valueOf(point.getRating()) + " people rated this";
-        }
+        return point.getRating() == 0 ? "0 people rated this" : "1 person rated this";
     }
 
     private void setupActivity() {
@@ -133,23 +129,39 @@ public class PointActivity extends AppCompatActivity {
 
         ratingBar.setRating(point.getRating());
 
+        setupRatingText();
+
         ratingBar.setOnRatingBarChangeListener(getRatingListener());
     }
 
+    private void setupRatingText() {
+        TextView ratingText = findViewById(R.id.ratingText);
+        ratingText.setText(getRatingText());
+    }
+
     private RatingBar.OnRatingBarChangeListener getRatingListener() {
-        RatingBar.OnRatingBarChangeListener listener = new RatingBar.OnRatingBarChangeListener() {
+        return new RatingBar.OnRatingBarChangeListener() {
             @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+            public void onRatingChanged(final RatingBar ratingBar, final float rating, boolean fromUser) {
                 if (fromUser) {
-                    ratingBar.setRating(rating);
+                    class UpdateRating extends AsyncTask<Void, Void, Boolean> {
+                        @Override
+                        protected Boolean doInBackground(Void... params) {
+                            db.pointDao().updateRating(point.getId(), (int)rating);
+                            return true;
+                        }
 
-//                    db.
+                        @Override
+                        protected void onPostExecute(Boolean res) {
+                            point.setRating((int) rating);
+                            ratingBar.setRating(rating);
+                            setupRatingText();
+                        }
+                    }
 
-//                    db
+                    new UpdateRating().execute();
                 }
             }
-        }
-
-        return listener;
+        };
     }
 }
