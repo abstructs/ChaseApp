@@ -1,5 +1,6 @@
 package com.chase.chaseapp.point;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,10 +12,13 @@ import android.widget.Toast;
 import com.chase.chaseapp.R;
 
 import database.AppDatabase;
+import entities.Point;
 
 public class EditPointActivity extends AppCompatActivity {
 
     private AppDatabase db;
+
+    private Point point;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,13 +27,45 @@ public class EditPointActivity extends AppCompatActivity {
 
         db = AppDatabase.getAppDatabase(getApplicationContext());
 
-//        populateFields();
+        point = getIntent().getParcelableExtra("point");
+
+        populateFields();
 
         setupSaveBtn();
     }
 
-    private void showError() {
+    private int indexOf(String element, String[] items) {
+        int i = 0;
+        for(String item : items) {
+            if(item.equals(element))
+                return i;
+
+            i++;
+        }
+
+        return -1;
+    }
+
+    private void populateFields() {
+        EditText nameInput = findViewById(R.id.nameInput);
+        EditText addressInput = findViewById(R.id.addressInput);
+        Spinner tagSpinner = findViewById(R.id.tagSpinner);
+
+        nameInput.setText(point.getTitle());
+        addressInput.setText(point.getAddress());
+
+        String[] tagOptions =  getResources().getStringArray(R.array.tags_array);
+
+        tagSpinner.setSelection(indexOf(point.getTag(), tagOptions));
+    }
+
+    private void showErrorToast() {
         Toast.makeText(getApplicationContext(), "Please fill out the fields.",
+                Toast.LENGTH_LONG).show();
+    }
+
+    private void showSuccessToast() {
+        Toast.makeText(getApplicationContext(), "Point has been updated.",
                 Toast.LENGTH_LONG).show();
     }
 
@@ -40,27 +76,44 @@ public class EditPointActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(formIsValid())
-                    savePointThenFinish();
+                    updatePointThenFinish();
                 else
-                    showError();
+                    showErrorToast();
             }
         });
     }
 
-    private void savePointThenFinish() {
+    private void setPoint() {
         EditText nameInput = findViewById(R.id.nameInput);
         EditText addressInput = findViewById(R.id.addressInput);
         Spinner tagSpinner = findViewById(R.id.tagSpinner);
 
-        String name = nameInput.getText().toString();
-        String address = addressInput.getText().toString();
-        String tag = tagSpinner.getSelectedItem().toString();
+        final String name = nameInput.getText().toString();
+        final String address = addressInput.getText().toString();
+        final String tag = tagSpinner.getSelectedItem().toString();
 
+        point.setTitle(name);
+        point.setAddress(address);
+        point.setTag(tag);
+    }
 
-        // TODO: save into database
-        System.out.println(name + " " + addressInput + " " + tag);
+    private void updatePointThenFinish() {
+        class UpdatePoint extends AsyncTask<Void, Void, Boolean> {
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                setPoint();
+                db.pointDao().updateOne(point);
+                return true;
+            }
 
-        finish();
+            @Override
+            protected void onPostExecute(Boolean res) {
+                showSuccessToast();
+                finish();
+            }
+        }
+
+        new UpdatePoint().execute();
     }
 
     private boolean formIsValid() {

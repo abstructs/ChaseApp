@@ -19,8 +19,8 @@ import entities.Point;
 
 public class PointListAdapter extends BaseAdapter {
 
-    ArrayList<Point> points;
-    Context context;
+    private ArrayList<Point> points;
+    private Context context;
 
     PointListAdapter(Context context, ArrayList<Point> points) {
         this.points = points;

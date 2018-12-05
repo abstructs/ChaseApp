@@ -14,8 +14,11 @@ public interface PointDao {
     @Query("SELECT * FROM Point")
     List<Point> getAll();
 
+    @Query("SELECT * FROM Point WHERE id=:id")
+    Point getOne(long id);
+
     @Update
-    void update(Point point);
+    void updateOne(Point point);
 
     @Query("UPDATE Point SET rating=:rating WHERE id=:id")
     void updateRating(long id, int rating);
