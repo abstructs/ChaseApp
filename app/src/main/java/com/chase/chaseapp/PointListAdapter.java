@@ -1,6 +1,9 @@
 package com.chase.chaseapp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,8 +45,22 @@ public class PointListAdapter extends BaseAdapter {
             view = LayoutInflater.from(context).inflate(R.layout.point_list_item, parent, false);
         }
 
+        final View layoutView = view;
+
         TextView title = view.findViewById(R.id.titleText);
         TextView address = view.findViewById(R.id.addressText);
+
+        ConstraintLayout pointLayout = view.findViewById(R.id.pointLayout);
+
+        
+
+        pointLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, PointActivity.class);
+                context.startActivity(intent);
+            }
+        });
 
         return view;
     }
