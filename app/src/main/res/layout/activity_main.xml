@@ -19,7 +19,6 @@
         tools:layout="@layout/activity_maps" />
 
     <LinearLayout
-        android:id="@+id/fab_view_id"
         android:layout_width="85dp"
         android:layout_height="250dp"
         android:layout_margin="30dp"
@@ -29,7 +28,7 @@
         app:layout_constraintEnd_toEndOf="@+id/map">
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/add_point_button_id"
+            android:id="@+id/addBtn"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginStart="8dp"
@@ -43,7 +42,7 @@
             app:srcCompat="@android:drawable/ic_input_add" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/view_team_button_id"
+            android:id="@+id/teamBtn"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginStart="8dp"
@@ -57,7 +56,7 @@
             app:srcCompat="@drawable/baseline_supervised_user_circle_white_48dp" />
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/view_all_button_id"
+            android:id="@+id/viewBtn"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginStart="8dp"

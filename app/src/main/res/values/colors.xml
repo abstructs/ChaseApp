@@ -25,4 +25,7 @@
     <color name="colorSecondaryDarkText">@color/black</color>
 
     <color name="colorAccent">@color/colorSecondary</color>
+
+    <color name="starDefaultColor">@color/colorSecondaryLight</color>
+    <color name="starActivatedColor">#F57F17</color>
 </resources>
