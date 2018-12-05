@@ -9,26 +9,26 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import entities.Task;
+import entities.Point;
 
-public class PointTaskAdapter extends BaseAdapter {
+public class PointListAdapter extends BaseAdapter {
 
-    ArrayList<Task> tasks;
+    ArrayList<Point> points;
     Context context;
 
-    public PointTaskAdapter(Context context, ArrayList<Task> tasks) {
+    PointListAdapter(Context context, ArrayList<Point> points) {
+        this.points = points;
         this.context = context;
-        this.tasks = tasks;
     }
 
     @Override
     public int getCount() {
-        return tasks.size();
+        return points.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return tasks.get(position);
+        return points.get(position);
     }
 
     @Override
@@ -39,16 +39,11 @@ public class PointTaskAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View view, ViewGroup parent) {
         if(view == null) {
-            view = LayoutInflater.from(context).inflate(R.layout.task_list_item, parent, false);
+            view = LayoutInflater.from(context).inflate(R.layout.point_list_item, parent, false);
         }
 
-        TextView titleText = view.findViewById(R.id.titleText);
-        TextView descriptionText = view.findViewById(R.id.descriptionText);
-
-        Task task = tasks.get(position);
-
-        titleText.setText(task.getTitle());
-        descriptionText.setText(task.getDescription());
+        TextView title = view.findViewById(R.id.titleText);
+        TextView address = view.findViewById(R.id.addressText);
 
         return view;
     }
