@@ -3,7 +3,7 @@
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
 
-    <color name="appBackground">#424242</color>
+    <color name="appBackground">@color/white</color>
     <color name="appText">@color/white</color>
 
     <color name="colorPrimary">#2e7d32</color>

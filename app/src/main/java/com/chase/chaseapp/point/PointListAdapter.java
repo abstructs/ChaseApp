@@ -1,14 +1,17 @@
-package com.chase.chaseapp;
+package com.chase.chaseapp.point;
 
 import android.content.Context;
 import android.content.Intent;
 import android.support.constraint.ConstraintLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.RatingBar;
 import android.widget.TextView;
+
+import com.chase.chaseapp.R;
+import com.chase.chaseapp.point.PointActivity;
 
 import java.util.ArrayList;
 
@@ -45,14 +48,18 @@ public class PointListAdapter extends BaseAdapter {
             view = LayoutInflater.from(context).inflate(R.layout.point_list_item, parent, false);
         }
 
-        final View layoutView = view;
+        Point point = points.get(position);
 
         TextView title = view.findViewById(R.id.titleText);
         TextView address = view.findViewById(R.id.addressText);
+        RatingBar ratingBar = view.findViewById(R.id.ratingBar);
+
+
+        title.setText(point.getTitle());
+        address.setText(point.getAddress());
+        ratingBar.setRating(point.getRating());
 
         ConstraintLayout pointLayout = view.findViewById(R.id.pointLayout);
-
-        
 
         pointLayout.setOnClickListener(new View.OnClickListener() {
             @Override

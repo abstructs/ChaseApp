@@ -1,8 +1,11 @@
-package com.chase.chaseapp;
+package com.chase.chaseapp.point;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.ListView;
+
+import com.chase.chaseapp.R;
 
 import java.util.ArrayList;
 
@@ -15,6 +18,14 @@ public class PointListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_point_list);
 
+        EditText searchInput = findViewById(R.id.searchInput);
+
+        // TODO: get spinner input value
+
+        populatePoints();
+    }
+
+    private void populatePoints() {
         ListView pointList = findViewById(R.id.pointList);
 
         ArrayList<Point> points = new ArrayList<>();
@@ -22,7 +33,7 @@ public class PointListActivity extends AppCompatActivity {
 
         point.setId(1);
         point.setAddress("160 Kendal Ave");
-        point.setRating(5);
+        point.setRating(4);
         point.setTitle("George Brown College");
 
         points.add(point);

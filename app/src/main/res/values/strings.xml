@@ -1,4 +1,11 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">ChaseApp</string>
     <string name="title_activity_maps" tools:ignore="ExtraTranslation">Map</string>
+
+    <string-array name="tags_array">
+        <item>Select A Tag</item>
+        <item>Photo Opportunity</item>
+        <item>Find An Item</item>
+        <item>Rest Spot</item>
+    </string-array>
 </resources>

@@ -1,11 +1,16 @@
-package com.chase.chaseapp;
+package com.chase.chaseapp.point;
 
 import android.content.Context;
+import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+
+import com.chase.chaseapp.R;
+import com.chase.chaseapp.task.EditTaskActivity;
 
 import java.util.ArrayList;
 
@@ -46,6 +51,26 @@ public class PointTaskAdapter extends BaseAdapter {
         TextView descriptionText = view.findViewById(R.id.descriptionText);
 
         Task task = tasks.get(position);
+
+        FloatingActionButton editFab = view.findViewById(R.id.editFab);
+
+        editFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, EditTaskActivity.class);
+
+                context.startActivity(intent);
+            }
+        });
+
+        FloatingActionButton deleteFab = view.findViewById(R.id.deleteFab);
+
+        deleteFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // delete and trigger re-render somehow
+            }
+        });
 
         titleText.setText(task.getTitle());
         descriptionText.setText(task.getDescription());
