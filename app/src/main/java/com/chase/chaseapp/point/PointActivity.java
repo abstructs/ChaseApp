@@ -67,9 +67,11 @@ public class PointActivity extends AppCompatActivity {
     private void setupFields() {
         TextView placeText = findViewById(R.id.placeText);
         TextView addressText = findViewById(R.id.addressText);
+        TextView tagText = findViewById(R.id.tagText);
 
         placeText.setText(point.getTitle());
         addressText.setText(point.getAddress());
+        tagText.setText(point.getTag());
     }
 
     private String getRatingText() {

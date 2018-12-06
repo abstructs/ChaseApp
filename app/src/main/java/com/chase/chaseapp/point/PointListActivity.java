@@ -27,7 +27,7 @@ public class PointListActivity extends AppCompatActivity {
     private String searchQuery;
 
     private enum Field {
-        name, tag;
+        name, tag
     }
 
     @Override
@@ -61,6 +61,8 @@ public class PointListActivity extends AppCompatActivity {
             searchField = Field.valueOf(field);
         } catch(IllegalArgumentException e) {
             searchField = Field.name;
+        } finally {
+            populatePointsWithFilter();
         }
     }
 

@@ -47,6 +47,13 @@
                     android:textColor="@color/white"
                     android:textSize="20sp" />
 
+                <TextView
+                    android:id="@+id/tagText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tag"
+                    android:textColor="@color/white" />
+
                 <RatingBar
                     android:id="@+id/ratingBar"
                     style="@style/customRatingBar"
