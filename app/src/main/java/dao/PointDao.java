@@ -14,6 +14,12 @@ public interface PointDao {
     @Query("SELECT * FROM Point")
     List<Point> getAll();
 
+    @Query("SELECT * FROM Point WHERE title LIKE :query")
+    List<Point> searchByTitle(String query);
+
+    @Query("SELECT * FROM Point WHERE tag LIKE :query")
+    List<Point> searchByTag(String query);
+
     @Query("SELECT * FROM Point WHERE id=:id")
     Point getOne(long id);
 
