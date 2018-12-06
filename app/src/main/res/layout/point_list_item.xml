@@ -22,14 +22,14 @@
                 android:id="@+id/titleText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="Place"
                 android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/addressText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:text="Address"
                 android:textSize="14sp" />
 
         </LinearLayout>
@@ -48,6 +48,12 @@
                 android:clickable="false"
                 android:isIndicator="true"
                 android:theme="@style/customRatingBar" />
+
+            <TextView
+                android:id="@+id/tagText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tag" />
         </LinearLayout>
     </LinearLayout>
 

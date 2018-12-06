@@ -13,14 +13,16 @@ import android.widget.TextView;
 import com.chase.chaseapp.R;
 import com.chase.chaseapp.point.PointActivity;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 import entities.Point;
 
 public class PointListAdapter extends BaseAdapter {
 
-    ArrayList<Point> points;
-    Context context;
+    private ArrayList<Point> points;
+    private Context context;
 
     PointListAdapter(Context context, ArrayList<Point> points) {
         this.points = points;
@@ -52,10 +54,12 @@ public class PointListAdapter extends BaseAdapter {
 
         TextView title = view.findViewById(R.id.titleText);
         TextView address = view.findViewById(R.id.addressText);
+        TextView tag = view.findViewById(R.id.tagText);
         RatingBar ratingBar = view.findViewById(R.id.ratingBar);
 
         title.setText(point.getTitle());
         address.setText(point.getAddress());
+        tag.setText(point.getTag());
         ratingBar.setRating(point.getRating());
 
         ConstraintLayout pointLayout = view.findViewById(R.id.pointLayout);

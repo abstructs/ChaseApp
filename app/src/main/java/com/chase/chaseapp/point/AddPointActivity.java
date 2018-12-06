@@ -8,11 +8,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
-
-import java.util.ArrayList;
 
 import database.AppDatabase;
 import entities.Point;
@@ -40,7 +37,7 @@ public class AddPointActivity extends AppCompatActivity {
                 if(formIsValid())
                     savePointThenFinish(getPoint());
                 else
-                    showError();
+                    showErrorToast();
             }
         });
     }
@@ -64,8 +61,13 @@ public class AddPointActivity extends AppCompatActivity {
         return point;
     }
 
-    private void showError() {
+    private void showErrorToast() {
         Toast.makeText(getApplicationContext(), "Please fill out the fields.",
+                Toast.LENGTH_LONG).show();
+    }
+
+    private void showSuccessToast() {
+        Toast.makeText(getApplicationContext(), "Point has been added.",
                 Toast.LENGTH_LONG).show();
     }
 
@@ -73,7 +75,7 @@ public class AddPointActivity extends AppCompatActivity {
         class InsertPoint extends AsyncTask<Void, Void, Boolean> {
             @Override
             protected Boolean doInBackground(Void... params) {
-                db.pointDao().insertOne(point);
+                db.pointDao().insertOne(getPoint());
                 return true;
             }
 

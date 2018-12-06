@@ -15,8 +15,6 @@ import android.widget.TextView;
 import com.chase.chaseapp.R;
 import com.chase.chaseapp.task.AddTaskActivity;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 import database.AppDatabase;
@@ -41,13 +39,39 @@ public class PointActivity extends AppCompatActivity {
         setupActivity();
     }
 
+    private void setPointAndRefresh() {
+        class GetAndSetPoint extends AsyncTask<Void, Void, Point> {
+            @Override
+            protected Point doInBackground(Void... params) {
+                return db.pointDao().getOne(point.getId());
+            }
+
+            @Override
+            protected void onPostExecute(Point p) {
+                point = p;
+
+                setupActivity();
+            }
+        }
+
+        new GetAndSetPoint().execute();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        setPointAndRefresh();
+    }
+
     private void setupFields() {
         TextView placeText = findViewById(R.id.placeText);
         TextView addressText = findViewById(R.id.addressText);
-
+        TextView tagText = findViewById(R.id.tagText);
 
         placeText.setText(point.getTitle());
         addressText.setText(point.getAddress());
+        tagText.setText(point.getTag());
     }
 
     private String getRatingText() {
@@ -119,6 +143,9 @@ public class PointActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PointActivity.this, EditPointActivity.class);
+
+                intent.putExtra("point", point);
+
                 startActivity(intent);
             }
         });

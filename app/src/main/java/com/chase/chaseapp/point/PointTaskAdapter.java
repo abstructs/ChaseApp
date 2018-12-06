@@ -18,10 +18,10 @@ import entities.Task;
 
 public class PointTaskAdapter extends BaseAdapter {
 
-    ArrayList<Task> tasks;
-    Context context;
+    private ArrayList<Task> tasks;
+    private Context context;
 
-    public PointTaskAdapter(Context context, ArrayList<Task> tasks) {
+    PointTaskAdapter(Context context, ArrayList<Task> tasks) {
         this.context = context;
         this.tasks = tasks;
     }
