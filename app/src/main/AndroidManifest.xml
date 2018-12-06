@@ -45,7 +45,10 @@
         <activity android:name=".point.AddPointActivity" />
         <activity android:name=".point.EditPointActivity" />
         <activity android:name=".task.AddTaskActivity" />
-        <activity android:name=".task.EditTaskActivity"></activity>
+        <activity android:name=".task.EditTaskActivity" />
+        <activity android:name=".team.AddMemberActivity" />
+        <activity android:name=".team.TeamActivity" />
+        <activity android:name=".team.EditMemberActivity"></activity>
     </application>
 
 </manifest>
