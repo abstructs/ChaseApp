@@ -7,35 +7,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.RatingBar;
 import android.widget.TextView;
-
 import com.chase.chaseapp.R;
-import com.chase.chaseapp.point.PointActivity;
-
+import com.chase.chaseapp.team.TeamActivity;
 import java.util.ArrayList;
+import entities.Member;
 
-import entities.Point;
-import entities.TeamMember;
+public class MemberAdapter extends BaseAdapter {
 
-public class TeamAdapter extends BaseAdapter {
-
-        ArrayList<Point> teamMembers;
+        ArrayList<Member> members;
         Context context;
 
-        TeamAdapter(Context context, ArrayList<TeamMember> teamMembers) {
-            this.teamMembers = teamMembers;
+        MemberAdapter(Context context, ArrayList<Member> members) {
+            this.members = members;
             this.context = context;
         }
 
         @Override
         public int getCount() {
-            return teamMembers.size();
+            return members.size();
         }
 
         @Override
         public Object getItem(int position) {
-            return teamMembers.get(position);
+            return members.get(position);
         }
 
         @Override
@@ -49,15 +44,15 @@ public class TeamAdapter extends BaseAdapter {
                 view = LayoutInflater.from(context).inflate(R.layout.member_list_item, parent, false);
             }
 
-            final TeamMember teamMember = teamMembers.get(position);
+            final Member member = members.get(position);
 
             TextView name = view.findViewById(R.id.nameText);
-            TextView phoneNumber = view.findViewById(R.id.phoneNumberText);
-            TextView email = view.findViewById(R.id.emailText);
+//            TextView phoneNumber = view.findViewById(R.id.phoneNumberText);
+//            TextView email = view.findViewById(R.id.emailText);
 
-            name.setText(teamMember.getName());
-            phoneNumber.setText(teamMember.getPhoneNumber());
-            email.setText(teamMember.getEmail());
+            name.setText(member.getName());
+//            phoneNumber.setText(member.getPhoneNumber());
+//            email.setText(member.getEmail());
 
             ConstraintLayout pointLayout = view.findViewById(R.id.pointLayout);
 
@@ -65,15 +60,10 @@ public class TeamAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(context.getApplicationContext(), TeamActivity.class);
-
-                    intent.putExtra("member", teamMember);
-
+                    intent.putExtra("member", member);
                     context.startActivity(intent);
                 }
             });
-
             return view;
         }
-    }
-
 }

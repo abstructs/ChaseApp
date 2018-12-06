@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="389dp"
-        android:layout_height="80dp"
+        android:layout_height="45dp"
         android:orientation="vertical"
         android:paddingLeft="30dp"
         android:paddingTop="10dp"
@@ -40,37 +40,6 @@
                 android:gravity="center_vertical|end"
                 android:orientation="horizontal">
 
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/viewFab"
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="5dp"
-                    android:clickable="true"
-                    android:scaleType="center"
-                    app:backgroundTint="@color/colorPrimary"
-                    app:srcCompat="@drawable/view_icon" />
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/editFab"
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="5dp"
-                    android:clickable="true"
-                    android:scaleType="center"
-                    app:backgroundTint="@color/colorPrimary"
-                    app:srcCompat="@drawable/edit_icon" />
-
-                <android.support.design.widget.FloatingActionButton
-                    android:id="@+id/deleteFab"
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="5dp"
-                    android:clickable="true"
-                    android:scaleType="center"
-                    app:srcCompat="@drawable/delete_icon" />
             </LinearLayout>
         </LinearLayout>
 

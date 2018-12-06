@@ -6,8 +6,8 @@ import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-@Entity(tableName="TeamMember")
-public class TeamMember implements Parcelable {
+@Entity(tableName="Member")
+public class Member implements Parcelable {
     @PrimaryKey(autoGenerate = true)
     private long id;
 
@@ -20,7 +20,7 @@ public class TeamMember implements Parcelable {
     @ColumnInfo(name = "email")
     private String email;
 
-    public TeamMember() {
+    public Member() {
     }
 
     public String getName() {
@@ -55,7 +55,7 @@ public class TeamMember implements Parcelable {
         this.email = email;
     }
 
-    public TeamMember(Parcel in) {
+    public Member(Parcel in) {
         this.id = in.readLong();
         this.name = in.readString();
         this.phoneNumber = in.readString();
@@ -75,14 +75,14 @@ public class TeamMember implements Parcelable {
         dest.writeString(this.getEmail());
     }
 
-    public static final Parcelable.Creator<entities.TeamMember> CREATOR
-            = new Parcelable.Creator<entities.TeamMember>() {
-        public entities.TeamMember createFromParcel(Parcel in) {
-            return new entities.TeamMember(in);
+    public static final Parcelable.Creator<Member> CREATOR
+            = new Parcelable.Creator<Member>() {
+        public Member createFromParcel(Parcel in) {
+            return new Member(in);
         }
 
-        public entities.TeamMember[] newArray(int size) {
-            return new entities.TeamMember[size];
+        public Member[] newArray(int size) {
+            return new Member[size];
         }
     };
 }

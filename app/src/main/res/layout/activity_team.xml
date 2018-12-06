@@ -53,11 +53,12 @@
             android:orientation="horizontal">
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/addFab"
+                android:id="@+id/addTeamMemberBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="20dp"
+                android:layout_marginBottom="5dp"
                 android:layout_weight="1"
                 android:clickable="true"
                 android:scaleType="center"
@@ -87,6 +88,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginBottom="10dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
                 android:fillViewport="true">
 
                 <ListView
