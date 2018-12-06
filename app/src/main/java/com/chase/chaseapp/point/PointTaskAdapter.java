@@ -2,28 +2,33 @@ package com.chase.chaseapp.point;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chase.chaseapp.R;
 import com.chase.chaseapp.task.EditTaskActivity;
 
 import java.util.ArrayList;
 
+import database.AppDatabase;
 import entities.Task;
 
 public class PointTaskAdapter extends BaseAdapter {
 
+    private AppDatabase db;
     private ArrayList<Task> tasks;
     private Context context;
 
     PointTaskAdapter(Context context, ArrayList<Task> tasks) {
         this.context = context;
         this.tasks = tasks;
+        db = AppDatabase.getAppDatabase(context);
     }
 
     @Override
@@ -50,7 +55,10 @@ public class PointTaskAdapter extends BaseAdapter {
         TextView titleText = view.findViewById(R.id.titleText);
         TextView descriptionText = view.findViewById(R.id.descriptionText);
 
-        Task task = tasks.get(position);
+        final Task task = tasks.get(position);
+
+        titleText.setText(task.getTitle());
+        descriptionText.setText(task.getDescription());
 
         FloatingActionButton editFab = view.findViewById(R.id.editFab);
 
@@ -58,6 +66,8 @@ public class PointTaskAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context.getApplicationContext(), EditTaskActivity.class);
+
+                intent.putExtra("task", task);
 
                 context.startActivity(intent);
             }
@@ -68,12 +78,27 @@ public class PointTaskAdapter extends BaseAdapter {
         deleteFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // delete and trigger re-render somehow
+                class DeleteTask extends AsyncTask<Void, Void, Boolean> {
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+                        db.taskDao().deleteOne(task);
+                        return true;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Boolean aBoolean) {
+                        if(context instanceof PointActivity) {
+                            ((PointActivity) context).populateTasks();
+
+                            Toast.makeText(context, "Task has been deleted.",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+
+                new DeleteTask().execute();
             }
         });
-
-        titleText.setText(task.getTitle());
-        descriptionText.setText(task.getDescription());
 
         return view;
     }

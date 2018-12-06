@@ -61,6 +61,7 @@ public class PointActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        populateTasks();
         setPointAndRefresh();
     }
 
@@ -88,7 +89,7 @@ public class PointActivity extends AppCompatActivity {
 
         setupFields();
 
-        populateTasks();
+//        populateTasks();
     }
 
     private void setupViewFab() {
@@ -99,25 +100,24 @@ public class PointActivity extends AppCompatActivity {
         FloatingActionButton shareFab = findViewById(R.id.shareFab);
     }
 
-    private void populateTasks() {
-        ListView taskList = findViewById(R.id.taskList);
+    public void populateTasks() {
 
-        ArrayList<Task> tasks = new ArrayList<>();
+        final ListView taskList = findViewById(R.id.taskList);
 
-        Task task = new Task();
+        class GetTasks extends AsyncTask<Void, Void, ArrayList<Task>> {
+            @Override
+            protected ArrayList<Task> doInBackground(Void... voids) {
+                return new ArrayList<>(db.taskDao().getAll());
+            }
 
-        task.setId(1);
-        task.setTitle("Take a photo");
-        task.setDescription("Some description");
+            @Override
+            protected void onPostExecute(ArrayList<Task> tasks) {
+                PointTaskAdapter pointTaskAdapter = new PointTaskAdapter(PointActivity.this, tasks);
+                taskList.setAdapter(pointTaskAdapter);
+            }
+        }
 
-        tasks.add(task);
-        tasks.add(task);
-        tasks.add(task);
-        tasks.add(task);
-
-        PointTaskAdapter pointTaskAdapter = new PointTaskAdapter(PointActivity.this, tasks);
-
-        taskList.setAdapter(pointTaskAdapter);
+        new GetTasks().execute();
     }
 
     private void setupAddTaskBtn() {
@@ -170,7 +170,7 @@ public class PointActivity extends AppCompatActivity {
         return new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(final RatingBar ratingBar, final float rating, boolean fromUser) {
-                if (fromUser) {
+                if(fromUser) {
                     class UpdateRating extends AsyncTask<Void, Void, Boolean> {
                         @Override
                         protected Boolean doInBackground(Void... params) {

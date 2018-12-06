@@ -6,6 +6,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
 import dao.PointDao;
+import dao.TaskDao;
 import entities.Point;
 import entities.Task;
 
@@ -15,6 +16,8 @@ public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
 
     public abstract PointDao pointDao();
+
+    public abstract TaskDao taskDao();
 
     public static synchronized AppDatabase getAppDatabase(Context context) {
         if(INSTANCE == null) {
