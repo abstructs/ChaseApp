@@ -20,6 +20,9 @@ public class Member implements Parcelable {
     @ColumnInfo(name = "email")
     private String email;
 
+    @ColumnInfo(name = "imageId")
+    private int imageId;
+
     public Member() {
     }
 
@@ -55,11 +58,20 @@ public class Member implements Parcelable {
         this.email = email;
     }
 
+    public int getImageId() {
+        return imageId;
+    }
+
+    public void setImageId(int imageId) {
+        this.imageId = imageId;
+    }
+
     public Member(Parcel in) {
         this.id = in.readLong();
         this.name = in.readString();
         this.phoneNumber = in.readString();
         this.email = in.readString();
+        this.imageId = in.readInt();
     }
 
     @Override
@@ -73,6 +85,7 @@ public class Member implements Parcelable {
         dest.writeString(this.getName());
         dest.writeString(this.getPhoneNumber());
         dest.writeString(this.getEmail());
+        dest.writeInt(this.getImageId());
     }
 
     public static final Parcelable.Creator<Member> CREATOR

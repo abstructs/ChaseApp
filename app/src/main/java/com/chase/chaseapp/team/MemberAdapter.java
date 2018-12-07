@@ -2,6 +2,7 @@ package com.chase.chaseapp.team;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,14 +10,15 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import com.chase.chaseapp.R;
-import com.chase.chaseapp.team.TeamActivity;
 import java.util.ArrayList;
+import database.AppDatabase;
 import entities.Member;
 
 public class MemberAdapter extends BaseAdapter {
 
-        ArrayList<Member> members;
-        Context context;
+        private ArrayList<Member> members;
+        private Context context;
+        private AppDatabase db;
 
         MemberAdapter(Context context, ArrayList<Member> members) {
             this.members = members;
@@ -46,24 +48,23 @@ public class MemberAdapter extends BaseAdapter {
 
             final Member member = members.get(position);
 
-            TextView name = view.findViewById(R.id.nameText);
-//            TextView phoneNumber = view.findViewById(R.id.phoneNumberText);
-//            TextView email = view.findViewById(R.id.emailText);
+            TextView name = view.findViewById(R.id.memberNameText);
 
             name.setText(member.getName());
-//            phoneNumber.setText(member.getPhoneNumber());
-//            email.setText(member.getEmail());
 
-            ConstraintLayout pointLayout = view.findViewById(R.id.pointLayout);
+            ConstraintLayout memberLayout = view.findViewById(R.id.memberLayout);
 
-            pointLayout.setOnClickListener(new View.OnClickListener() {
+            memberLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context.getApplicationContext(), TeamActivity.class);
+                    Intent intent = new Intent(context.getApplicationContext(), MemberActivity.class);
                     intent.putExtra("member", member);
                     context.startActivity(intent);
                 }
             });
+
             return view;
         }
+
+
 }

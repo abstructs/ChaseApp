@@ -2,10 +2,10 @@ package com.chase.chaseapp.team;
 
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.chase.chaseapp.R;
@@ -36,14 +36,14 @@ public class TeamActivity extends AppCompatActivity {
         populateMembers();
     }
 
-    private void setupFields() {
-        TextView nameText = findViewById(R.id.nameText);
-        nameText.setText(member.getName());
-    }
+//    private void setupFields() {
+//        TextView nameText = findViewById(R.id.memberNameText);
+//        nameText.setText(member.getName());
+//    }
 
     private void setupActivity() {
         setupAddMemberBtn();
-        setupFields();
+//        setupFields();
         populateMembers();
     }
 
@@ -66,7 +66,7 @@ public class TeamActivity extends AppCompatActivity {
     }
 
     private void setupAddMemberBtn() {
-        FloatingActionButton addMemberBtn = findViewById(R.id.addTeamMemberBtn);
+        Button addMemberBtn = findViewById(R.id.addMemberBtn);
 
         addMemberBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -3,6 +3,16 @@
     <string name="title_activity_maps" tools:ignore="ExtraTranslation">Map</string>
     <string name="team_name">TeamName</string>
     <string name="members">Members</string>
+    <string name="memberName">member name</string>
+    <string name="edit_btn">Edit</string>
+    <string name="delete_btn">Delete</string>
+    <string name="phoneNumber">phone number</string>
+    <string name="email">email</string>
+    <string name="add_member">Add Member</string>
+    <string name="add_member_text">Add Member</string>
+    <string name="phone_number_input">Enter phone number</string>
+    <string name="email_input">Enter email</string>
+    <string name="edit_member_text">Edit Member</string>
 
     <string-array name="tags_array">
         <item>Select A Tag</item>
