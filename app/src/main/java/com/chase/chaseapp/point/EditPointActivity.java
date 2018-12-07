@@ -88,9 +88,9 @@ public class EditPointActivity extends AppCompatActivity {
         EditText addressInput = findViewById(R.id.addressInput);
         Spinner tagSpinner = findViewById(R.id.tagSpinner);
 
-        final String name = nameInput.getText().toString();
-        final String address = addressInput.getText().toString();
-        final String tag = tagSpinner.getSelectedItem().toString();
+        String name = nameInput.getText().toString();
+        String address = addressInput.getText().toString();
+        String tag = tagSpinner.getSelectedItem().toString();
 
         point.setTitle(name);
         point.setAddress(address);

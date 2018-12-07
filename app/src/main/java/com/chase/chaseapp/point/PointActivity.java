@@ -1,6 +1,5 @@
 package com.chase.chaseapp.point;
 
-import android.arch.persistence.room.Update;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;

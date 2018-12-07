@@ -10,6 +10,8 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -42,10 +44,13 @@
             android:label="@string/title_activity_maps" />
         <activity android:name=".point.PointActivity" />
         <activity android:name=".point.PointListActivity" />
-        <activity android:name=".point.AddPointActivity" />
+        <activity android:name=".point.AddPointActivity">
+
+        </activity>
         <activity android:name=".point.EditPointActivity" />
         <activity android:name=".task.AddTaskActivity" />
-        <activity android:name=".task.EditTaskActivity"></activity>
+        <activity android:name=".task.EditTaskActivity"/>
+
     </application>
 
 </manifest>
