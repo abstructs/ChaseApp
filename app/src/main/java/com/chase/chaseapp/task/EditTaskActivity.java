@@ -55,6 +55,11 @@ public class EditTaskActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
     }
 
+    private void showErrorToast() {
+        Toast.makeText(getApplicationContext(), "Please fill out the forms.",
+                Toast.LENGTH_LONG).show();
+    }
+
     private void updateTaskThenFinish() {
         class UpdatePoint extends AsyncTask<Void, Void, Boolean> {
             @Override
@@ -74,16 +79,29 @@ public class EditTaskActivity extends AppCompatActivity {
         new UpdatePoint().execute();
     }
 
-    private void setupSaveBtn() {
+    private boolean formIsValid() {
         EditText titleInput = findViewById(R.id.titleInput);
         EditText descriptionInput = findViewById(R.id.descriptionInput);
 
+        String title = titleInput.getText().toString();
+        String description = descriptionInput.getText().toString();
+
+        return title.length() != 0 && description.length() != 0;
+    }
+
+    private void setupSaveBtn() {
         Button saveBtn = findViewById(R.id.saveBtn);
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                updateTaskThenFinish();
+                if(formIsValid()) {
+                    updateTaskThenFinish();
+                    showSuccessToast();
+                } else {
+                    showErrorToast();
+                }
+
             }
         });
     }

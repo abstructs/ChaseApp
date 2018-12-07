@@ -64,7 +64,7 @@ public class AddTaskActivity extends AppCompatActivity {
                 Toast.LENGTH_LONG).show();
     }
 
-    private boolean isValidForm() {
+    private boolean formIsValid() {
         EditText titleInput = findViewById(R.id.titleInput);
         EditText descriptionInput = findViewById(R.id.descriptionInput);
 
@@ -84,7 +84,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Boolean aBoolean) {
-                if(isValidForm()) {
+                if(formIsValid()) {
                     showSuccessToast();
                     finish();
                 } else {
