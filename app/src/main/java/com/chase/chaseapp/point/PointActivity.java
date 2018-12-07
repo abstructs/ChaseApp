@@ -49,7 +49,7 @@ public class PointActivity extends AppCompatActivity {
             protected void onPostExecute(Point p) {
                 point = p;
 
-                setupActivity();
+                setupFields();
             }
         }
 
