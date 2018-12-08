@@ -39,9 +39,10 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps" />
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
+
         <activity android:name=".point.PointActivity" />
         <activity android:name=".point.PointListActivity" />
         <activity android:name=".point.AddPointActivity">
@@ -54,7 +55,9 @@
         <activity android:name=".team.AddMemberActivity" />
         <activity android:name=".team.TeamActivity" />
         <activity android:name=".team.EditMemberActivity" />
-        <activity android:name=".team.MemberActivity"></activity>
+        <activity android:name=".team.MemberActivity" />
+        <activity android:name=".PlacesActivity" />
+        <activity android:name=".point.PointDetailActivity" />
     </application>
 
 </manifest>

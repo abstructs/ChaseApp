@@ -26,6 +26,8 @@ public class PointActivity extends AppCompatActivity {
 
     private AppDatabase db;
 
+    static final int EDIT_POINT_REQUEST = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,9 +144,8 @@ public class PointActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PointActivity.this, EditPointActivity.class);
-
                 intent.putExtra("point", point);
-
+                intent.putExtra("requestCode", EDIT_POINT_REQUEST);
                 startActivity(intent);
             }
         });

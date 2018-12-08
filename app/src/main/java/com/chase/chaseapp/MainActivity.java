@@ -16,32 +16,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton addBtn = findViewById(R.id.addBtn);
-        FloatingActionButton viewBtn = findViewById(R.id.viewBtn);
-        FloatingActionButton teamBtn = findViewById(R.id.teamBtn);
-
-        addBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, AddPointActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        teamBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, TeamActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        viewBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, PointListActivity.class);
-                startActivity(intent);
-            }
-        });
+        Intent intent = new Intent(MainActivity.this, PlacesActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

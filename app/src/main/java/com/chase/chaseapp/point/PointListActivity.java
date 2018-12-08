@@ -132,6 +132,7 @@ public class PointListActivity extends AppCompatActivity {
         class GetPoints extends AsyncTask<Void, Void, ArrayList<Point>> {
             @Override
             protected ArrayList<Point> doInBackground(Void... params) {
+                //crash occurs here
                 return new ArrayList<>(db.pointDao().getAll());
             }
 
