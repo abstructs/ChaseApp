@@ -1,12 +1,10 @@
 package com.chase.chaseapp.point;
 
-import android.arch.persistence.room.Update;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -52,7 +50,6 @@ public class PointActivity extends AppCompatActivity {
         }
     }
 
-    //gets point by id from db, sets point variable, calls setupActivity
     private void setPointAndRefresh() {
         class GetAndSetPoint extends AsyncTask<Void, Void, Point> {
             @Override
@@ -92,7 +89,6 @@ public class PointActivity extends AppCompatActivity {
         return point.getRating() == 0 ? "0 people rated this" : "1 person rated this";
     }
 
-    //calls setup functions for buttons and rating bar, fills in text fields with point data, calls populate tasks
     private void setupActivity() {
         setupAddFab();
         setupAddTaskBtn();
@@ -114,7 +110,6 @@ public class PointActivity extends AppCompatActivity {
         FloatingActionButton shareFab = findViewById(R.id.shareFab);
     }
 
-    //adds default tasks to the point with a pointTaskAdapter
     private void populateTasks() {
         ListView taskList = findViewById(R.id.taskList);
 
@@ -152,8 +147,6 @@ public class PointActivity extends AppCompatActivity {
 
     }
 
-    //sets edit button onclick to putExtra(point)
-    //starts edit point activity for result
     private void setupEditFab() {
         FloatingActionButton editFab = findViewById(R.id.editFab);
 

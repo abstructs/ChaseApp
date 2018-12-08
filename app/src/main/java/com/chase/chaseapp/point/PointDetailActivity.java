@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chase.chaseapp.R;
@@ -36,6 +37,9 @@ public class PointDetailActivity extends AppCompatActivity {
         if(requestCode == EDIT_POINT_REQUEST) {
             point = getIntent().getParcelableExtra("point");
             populateFields();
+        } else {
+            TextView title = findViewById(R.id.detailTitle);
+            title.setText("Add Point");
         }
 
         setupSaveBtn();
@@ -107,10 +111,7 @@ public class PointDetailActivity extends AppCompatActivity {
         point.setTitle(name);
         point.setAddress(address);
         point.setTag(tag);
-
-
     }
-
 
     private void savePointThenFinish() {
         class SavePoint extends AsyncTask<Void, Void, Boolean> {
@@ -119,21 +120,25 @@ public class PointDetailActivity extends AppCompatActivity {
                 setPoint();
                 if (requestCode == EDIT_POINT_REQUEST)
                     db.pointDao().updateOne(point);
-                else // if (requestCode == ADD_POINT_REQUEST)
+                else
                     db.pointDao().insertOne(point);
                 return true;
             }
 
             @Override
             protected void onPostExecute(Boolean res) {
-                showSuccessToast();
+                showSuccessToast(); //set message to 'point added' when requestcode is for add
 
-                Intent i = getIntent();
-                i.putExtra("point", point);
-                setResult(RESULT_OK, i);
-//              if (requestCode == ADD_POINT_REQUEST) {
-//
-//              }
+                Intent intent;
+
+                if(requestCode == ADD_POINT_REQUEST) {
+                    intent = new Intent(PointDetailActivity.this, PointActivity.class);
+                    intent.putExtra("point", point);
+                    startActivity(intent);
+                } else {
+                    intent = getIntent();
+                    intent.putExtra("point", point);
+                }
                 finish();
             }
         }
