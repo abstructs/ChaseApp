@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -27,6 +28,8 @@ public class PointActivity extends AppCompatActivity {
 
     private AppDatabase db;
 
+    static final int EDIT_POINT_REQUEST = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +42,17 @@ public class PointActivity extends AppCompatActivity {
         setupActivity();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == EDIT_POINT_REQUEST) {
+                point = data.getParcelableExtra("point");
+                setupFields();
+            }
+        }
+    }
+
+    //gets point by id from db, sets point variable, calls setupActivity
     private void setPointAndRefresh() {
         class GetAndSetPoint extends AsyncTask<Void, Void, Point> {
             @Override
@@ -57,12 +71,12 @@ public class PointActivity extends AppCompatActivity {
         new GetAndSetPoint().execute();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        setPointAndRefresh();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//
+//        setPointAndRefresh();
+//    }
 
     private void setupFields() {
         TextView placeText = findViewById(R.id.placeText);
@@ -78,6 +92,7 @@ public class PointActivity extends AppCompatActivity {
         return point.getRating() == 0 ? "0 people rated this" : "1 person rated this";
     }
 
+    //calls setup functions for buttons and rating bar, fills in text fields with point data, calls populate tasks
     private void setupActivity() {
         setupAddFab();
         setupAddTaskBtn();
@@ -99,6 +114,7 @@ public class PointActivity extends AppCompatActivity {
         FloatingActionButton shareFab = findViewById(R.id.shareFab);
     }
 
+    //adds default tasks to the point with a pointTaskAdapter
     private void populateTasks() {
         ListView taskList = findViewById(R.id.taskList);
 
@@ -136,16 +152,17 @@ public class PointActivity extends AppCompatActivity {
 
     }
 
+    //sets edit button onclick to putExtra(point)
+    //starts edit point activity for result
     private void setupEditFab() {
         FloatingActionButton editFab = findViewById(R.id.editFab);
 
         editFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PointActivity.this, EditPointActivity.class);
-
+                Intent intent = new Intent(PointActivity.this, PointDetailActivity.class);
                 intent.putExtra("point", point);
-
+                intent.putExtra("requestCode", EDIT_POINT_REQUEST);
                 startActivity(intent);
             }
         });
