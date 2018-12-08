@@ -16,12 +16,9 @@ import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-
 import com.chase.chaseapp.point.AddPointActivity;
 
 import com.chase.chaseapp.helper.HelperUtility;
-import com.chase.chaseapp.point.AddPointActivity;
-import com.chase.chaseapp.point.PointListActivity;
 import com.chase.chaseapp.team.TeamActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -122,9 +119,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        Intent intent = new Intent(MainActivity.this, PlacesActivity.class);
-        startActivity(intent);
-        finish();
+        viewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, TeamActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private Location getLastKnownLocation() throws SecurityException {
@@ -173,6 +174,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+
+        // TODO: get the callback for permissions, as is doesn't get the permission on the first run
         requestLocationPermissionsIfMissing();
 
         try {

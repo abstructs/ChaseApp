@@ -10,15 +10,12 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-<<<<<<< Updated upstream
-=======
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <uses-feature android:name="android.hardware.location.gps" />
 
->>>>>>> Stashed changes
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -52,15 +49,18 @@
 
         <activity android:name=".point.PointActivity" />
         <activity android:name=".point.PointListActivity" />
-        <activity android:name=".point.AddPointActivity" />
+        <activity android:name=".point.AddPointActivity">
+
+        </activity>
         <activity android:name=".point.EditPointActivity" />
         <activity android:name=".task.AddTaskActivity" />
-        <activity android:name=".task.EditTaskActivity" />
+
+        <activity android:name=".task.EditTaskActivity"/>
         <activity android:name=".team.AddMemberActivity" />
         <activity android:name=".team.TeamActivity" />
         <activity android:name=".team.EditMemberActivity" />
-        <activity android:name=".PlacesActivity" />
-        <activity android:name=".point.PointDetailActivity"></activity>
+
+        <activity android:name=".team.MemberActivity"></activity>
     </application>
 
 </manifest>
