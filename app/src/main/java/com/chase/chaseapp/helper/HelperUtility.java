@@ -32,4 +32,16 @@ public class HelperUtility {
                 Toast.LENGTH_LONG).show();
     }
 
+    public int indexOf(String element, String[] items) {
+        int i = 0;
+        for(String item : items) {
+            if(item.equals(element))
+                return i;
+
+            i++;
+        }
+
+        return -1;
+    }
+
 }

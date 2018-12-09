@@ -117,6 +117,7 @@ public class PlacesActivity extends FragmentActivity implements OnMapReadyCallba
 
     private void addMapMarkers(ArrayList<Point> pointsList) {
         mMap.setInfoWindowAdapter(new MapMarkerAdapter(PlacesActivity.this));
+
         for(Point point: pointsList){
             LatLng location = new LatLng(point.getLatitude(), point.getLongitude());
             Marker marker = mMap.addMarker(new MarkerOptions().position(location));
@@ -130,7 +131,7 @@ public class PlacesActivity extends FragmentActivity implements OnMapReadyCallba
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Point point = (Point)marker.getTag();
+                Point point = (Point) marker.getTag();
                 Intent intent = new Intent(PlacesActivity.this, PointActivity.class);
                 intent.putExtra("point", point);
                 startActivity(intent);
@@ -219,7 +220,7 @@ public class PlacesActivity extends FragmentActivity implements OnMapReadyCallba
                 goToMyLocation();
             }
         });
-
+        // ??????
         googleLocationButton = ((View)mapFragment.getView().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         if(googleLocationButton != null)
             googleLocationButton.setVisibility(View.GONE);

@@ -34,13 +34,12 @@ public class PointDetailActivity extends AppCompatActivity {
     private int maxAddressResults;
     private int requestCode;
     private static final int ADD_POINT_REQUEST = 1;
-//  private static final int EDIT_POINT_REQUEST = 2;
+//  private static final int EDIT_POINT_REQUEST = 2; // (Default)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_point_detail);
-        Log.d("HELP", "it works");
 
         db = AppDatabase.getAppDatabase(getApplicationContext());
         helperUtility = new HelperUtility(PointDetailActivity.this);
@@ -54,13 +53,17 @@ public class PointDetailActivity extends AppCompatActivity {
     }
 
     private void setupAddActivity() {
-        TextView title = findViewById(R.id.detailTitle);
+        point = new Point();
+        TextView title = findViewById(R.id.titleText);
         title.setText("Add Point");
+
         setupSaveBtn();
     }
 
     private void setupEditActivity() {
         point = getIntent().getParcelableExtra("point");
+        TextView title = findViewById(R.id.titleText);
+        title.setText("Edit Point");
         populateFields();
         setupUpdateBtn();
     }
@@ -72,10 +75,12 @@ public class PointDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    if(formIsValid())
+                    if(formIsValid()) {
+                        setPoint();
                         savePointThenFinish(getPoint());
-                    else
+                    } else {
                         helperUtility.showToast("Please fill out the fields.");
+                    }
                 } catch(IOException e) {
                     helperUtility.showToast("We couldn't find that location.");
                 }
@@ -90,9 +95,10 @@ public class PointDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 try {
-                    if(formIsValid())
-                        updatePointThenFinish(setPoint());
-                    else
+                    if(formIsValid()) {
+                        setPoint();
+                        updatePointThenFinish(getPoint());
+                    } else
                         helperUtility.showToast("Please fill out the fields.");
                 } catch(IOException e) {
                     helperUtility.showToast("We couldn't find that location.");
@@ -111,7 +117,7 @@ public class PointDetailActivity extends AppCompatActivity {
 
         String[] tagOptions =  getResources().getStringArray(R.array.tags_array);
 
-        tagSpinner.setSelection(indexOf(point.getTag(), tagOptions));
+        tagSpinner.setSelection(helperUtility.indexOf(point.getTag(), tagOptions));
     }
 
     // TODO: potentially let the user choose which location they want
@@ -128,7 +134,7 @@ public class PointDetailActivity extends AppCompatActivity {
         return new LatLng(location.getLatitude(), location.getLongitude());
     }
 
-    private Point getPoint() throws IOException {
+    private void setPoint() throws IOException {
         EditText nameInput = findViewById(R.id.nameInput);
         EditText addressInput = findViewById(R.id.addressInput);
         Spinner tagSpinner = findViewById(R.id.tagSpinner);
@@ -137,8 +143,6 @@ public class PointDetailActivity extends AppCompatActivity {
         String address = addressInput.getText().toString();
         String tag = tagSpinner.getSelectedItem().toString();
         LatLng latLng = getLocationFromAddress(address);
-
-        Point point = new Point();
 
         point.setTitle(name);
         point.setRating(0);
@@ -146,42 +150,47 @@ public class PointDetailActivity extends AppCompatActivity {
         point.setTag(tag);
         point.setLatitude(latLng.latitude);
         point.setLongitude(latLng.longitude);
+    }
 
+    private Point getPoint() {
         return point;
     }
 
-    private Point setPoint() throws IOException {
-        EditText nameInput = findViewById(R.id.nameInput);
-        EditText addressInput = findViewById(R.id.addressInput);
-        Spinner tagSpinner = findViewById(R.id.tagSpinner);
-
-        String name = nameInput.getText().toString();
-        String address = addressInput.getText().toString();
-        String tag = tagSpinner.getSelectedItem().toString();
-        LatLng latLng = getLocationFromAddress(address);
-
-        point.setTitle(name);
-        point.setAddress(address);
-        point.setTag(tag);
-        point.setLatitude(latLng.latitude);
-        point.setLongitude(latLng.longitude);
-
-        return point;
-    }
+//    private Point setPoint() throws IOException {
+//        EditText nameInput = findViewById(R.id.nameInput);
+//        EditText addressInput = findViewById(R.id.addressInput);
+//        Spinner tagSpinner = findViewById(R.id.tagSpinner);
+//
+//        String name = nameInput.getText().toString();
+//        String address = addressInput.getText().toString();
+//        String tag = tagSpinner.getSelectedItem().toString();
+//        LatLng latLng = getLocationFromAddress(address);
+//
+//        point.setTitle(name);
+//        point.setAddress(address);
+//        point.setTag(tag);
+//        point.setLatitude(latLng.latitude);
+//        point.setLongitude(latLng.longitude);
+//
+//        return point;
+//    }
 
     private void savePointThenFinish(final Point point) {
-        class InsertPoint extends AsyncTask<Void, Void, Boolean> {
-            long pointId;
+        class InsertPoint extends AsyncTask<Void, Void, Long> {
             @Override
-            protected Boolean doInBackground(Void... params) {
-                db.pointDao().insertOne(point);
-                return true;
+            protected Long doInBackground(Void... params) {
+                return db.pointDao().insertOne(point);
             }
 
             @Override
-            protected void onPostExecute(Boolean res) {
+            protected void onPostExecute(Long pointId) {
                 helperUtility.showToast("Point has been added.");
+
                 Intent intent = new Intent(PointDetailActivity.this, PointActivity.class);
+
+                point.setId(pointId);
+
+                intent.putExtra("point", point);
                 startActivity(intent);
                 finish();
             }
@@ -201,24 +210,12 @@ public class PointDetailActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Boolean res) {
                 helperUtility.showToast("Point has been updated.");
-                Intent intent = getIntent();
+
                 finish();
             }
         }
 
         new UpdatePoint().execute();
-    }
-
-    private int indexOf(String element, String[] items) {
-        int i = 0;
-        for(String item : items) {
-            if(item.equals(element))
-                return i;
-
-            i++;
-        }
-
-        return -1;
     }
 
     private boolean formIsValid() {
