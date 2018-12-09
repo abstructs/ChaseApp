@@ -56,8 +56,7 @@
         <activity android:name=".team.TeamActivity" />
         <activity android:name=".team.EditMemberActivity" />
         <activity android:name=".team.MemberActivity" />
-        <activity android:name=".PlacesActivity" />
+        <activity android:name=".map.PlacesActivity" />
         <activity android:name=".point.PointDetailActivity" />
     </application>
-
 </manifest>

@@ -6,6 +6,7 @@ import android.location.Geocoder;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -39,6 +40,7 @@ public class PointDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_point_detail);
+        Log.d("HELP", "it works");
 
         db = AppDatabase.getAppDatabase(getApplicationContext());
         helperUtility = new HelperUtility(PointDetailActivity.this);
@@ -97,18 +99,6 @@ public class PointDetailActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private int indexOf(String element, String[] items) {
-        int i = 0;
-        for(String item : items) {
-            if(item.equals(element))
-                return i;
-
-            i++;
-        }
-
-        return -1;
     }
 
     private void populateFields() {
@@ -181,9 +171,9 @@ public class PointDetailActivity extends AppCompatActivity {
 
     private void savePointThenFinish(final Point point) {
         class InsertPoint extends AsyncTask<Void, Void, Boolean> {
+            long pointId;
             @Override
             protected Boolean doInBackground(Void... params) {
-                //crash occurs here
                 db.pointDao().insertOne(point);
                 return true;
             }
@@ -192,7 +182,6 @@ public class PointDetailActivity extends AppCompatActivity {
             protected void onPostExecute(Boolean res) {
                 helperUtility.showToast("Point has been added.");
                 Intent intent = new Intent(PointDetailActivity.this, PointActivity.class);
-                intent.putExtra("point", point);
                 startActivity(intent);
                 finish();
             }
@@ -212,11 +201,24 @@ public class PointDetailActivity extends AppCompatActivity {
             @Override
             protected void onPostExecute(Boolean res) {
                 helperUtility.showToast("Point has been updated.");
+                Intent intent = getIntent();
                 finish();
             }
         }
 
         new UpdatePoint().execute();
+    }
+
+    private int indexOf(String element, String[] items) {
+        int i = 0;
+        for(String item : items) {
+            if(item.equals(element))
+                return i;
+
+            i++;
+        }
+
+        return -1;
     }
 
     private boolean formIsValid() {

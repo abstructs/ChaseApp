@@ -11,7 +11,7 @@ import entities.Member;
 import entities.Point;
 import entities.Task;
 
-@Database(entities = { Point.class, Task.class, Member.class}, version = 1)
+@Database(entities = { Point.class, Task.class, Member.class}, version = 2)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
@@ -27,6 +27,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
             INSTANCE = Room
                     .databaseBuilder(context.getApplicationContext(), AppDatabase.class, "chase-database")
+                    .fallbackToDestructiveMigration()
                     .build();
         }
 
