@@ -131,17 +131,21 @@ public class PointTaskAdapter extends BaseAdapter {
         achievedCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                task.setAchieved(!task.getAchieved());
-
                 TextView titleText = view.findViewById(R.id.titleText);
                 TextView descriptionText = view.findViewById(R.id.descriptionText);
 
-                titleText.setTextColor(Color.GREEN);
-                titleText.setTypeface(null, Typeface.BOLD);
-                descriptionText.setTextColor(Color.GREEN);
-                descriptionText.setTypeface(null, Typeface.BOLD);
-
-                helperUtility.showToast("Task achieved!");
+                if(achievedCheckBox.isChecked()) {
+                    task.setAchieved(true);
+                    titleText.setTextColor(Color.GREEN);
+                    descriptionText.setTextColor(Color.GREEN);
+                    titleText.setTypeface(null, Typeface.BOLD);
+                    helperUtility.showToast("Task achieved!");
+                } else {
+                    task.setAchieved(false);
+                    titleText.setTextColor(Color.BLACK);
+                    descriptionText.setTextColor(Color.BLACK);
+                    titleText.setTypeface(null, Typeface.NORMAL);
+                }
 
                 updateTask(task);
             }
