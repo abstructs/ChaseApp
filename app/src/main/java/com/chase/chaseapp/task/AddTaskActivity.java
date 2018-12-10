@@ -52,6 +52,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
         task.setTitle(title);
         task.setDescription(description);
+        task.setAchieved(false);
     }
 
     private void showErrorToast() {

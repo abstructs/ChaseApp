@@ -51,6 +51,13 @@
                 android:gravity="center_vertical|end"
                 android:orientation="horizontal">
 
+                <CheckBox
+                    android:id="@+id/achieved_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="1" />
+
                 <android.support.design.widget.FloatingActionButton
                     android:id="@+id/editFab"
                     android:layout_width="30dp"

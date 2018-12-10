@@ -1,17 +1,23 @@
 package com.chase.chaseapp.point;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chase.chaseapp.R;
+import com.chase.chaseapp.helper.HelperUtility;
 import com.chase.chaseapp.task.EditTaskActivity;
 
 import java.util.ArrayList;
@@ -24,11 +30,13 @@ public class PointTaskAdapter extends BaseAdapter {
     private AppDatabase db;
     private ArrayList<Task> tasks;
     private Context context;
+    private HelperUtility helperUtility;
 
     PointTaskAdapter(Context context, ArrayList<Task> tasks) {
         this.context = context;
         this.tasks = tasks;
-        db = AppDatabase.getAppDatabase(context);
+        this.db = AppDatabase.getAppDatabase(context);
+        this.helperUtility = new HelperUtility(context);
     }
 
     @Override
@@ -46,20 +54,19 @@ public class PointTaskAdapter extends BaseAdapter {
         return position;
     }
 
-    @Override
-    public View getView(int position, View view, ViewGroup parent) {
-        if(view == null) {
-            view = LayoutInflater.from(context).inflate(R.layout.task_list_item, parent, false);
-        }
-
+    private View populateFields(View view, Task task) {
         TextView titleText = view.findViewById(R.id.titleText);
         TextView descriptionText = view.findViewById(R.id.descriptionText);
-
-        final Task task = tasks.get(position);
+        CheckBox achievedCheckBox = view.findViewById(R.id.achieved_id);
 
         titleText.setText(task.getTitle());
         descriptionText.setText(task.getDescription());
+        achievedCheckBox.setChecked(task.getAchieved());
 
+        return view;
+    }
+
+    private void setupEditFab(View view, final Task task) {
         FloatingActionButton editFab = view.findViewById(R.id.editFab);
 
         editFab.setOnClickListener(new View.OnClickListener() {
@@ -72,33 +79,87 @@ public class PointTaskAdapter extends BaseAdapter {
                 context.startActivity(intent);
             }
         });
+    }
 
+    private void deleteTask(final Task task) {
+        class DeleteTask extends AsyncTask<Void, Void, Boolean> {
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                db.taskDao().deleteOne(task);
+                return true;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean aBoolean) {
+                if(context instanceof PointActivity) {
+                    ((PointActivity) context).populateTasks();
+                    helperUtility.showToast("Task deleted");
+                }
+            }
+        }
+
+        new DeleteTask().execute();
+    }
+
+    private void setupDelete(View view, final Task task) {
         FloatingActionButton deleteFab = view.findViewById(R.id.deleteFab);
 
         deleteFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                class DeleteTask extends AsyncTask<Void, Void, Boolean> {
-                    @Override
-                    protected Boolean doInBackground(Void... voids) {
-                        db.taskDao().deleteOne(task);
-                        return true;
-                    }
-
-                    @Override
-                    protected void onPostExecute(Boolean aBoolean) {
-                        if(context instanceof PointActivity) {
-                            ((PointActivity) context).populateTasks();
-
-                            Toast.makeText(context, "Task has been deleted.",
-                                    Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
-
-                new DeleteTask().execute();
+                deleteTask(task);
             }
         });
+    }
+
+    private void updateTask(final Task task) {
+        class MarkAchievement extends AsyncTask<Void, Void, Boolean> {
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                db.taskDao().updateOne(task);
+                return true;
+            }
+        }
+
+        new MarkAchievement().execute();
+    }
+
+    public void setupCheckBox(final View view, final Task task) {
+
+        final CheckBox achievedCheckBox = view.findViewById(R.id.achieved_id);
+
+        achievedCheckBox.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                task.setAchieved(!task.getAchieved());
+
+                TextView titleText = view.findViewById(R.id.titleText);
+                TextView descriptionText = view.findViewById(R.id.descriptionText);
+
+                titleText.setTextColor(Color.GREEN);
+                titleText.setTypeface(null, Typeface.BOLD);
+                descriptionText.setTextColor(Color.GREEN);
+                descriptionText.setTypeface(null, Typeface.BOLD);
+
+                helperUtility.showToast("Task achieved!");
+
+                updateTask(task);
+            }
+        });
+    }
+
+    @Override
+    public View getView(int position, View view, ViewGroup parent) {
+        if (view == null) {
+            view = LayoutInflater.from(context).inflate(R.layout.task_list_item, parent, false);
+        }
+
+        Task task = tasks.get(position);
+
+        populateFields(view, task);
+        setupCheckBox(view, task);
+        setupEditFab(view, task);
+        setupDelete(view, task);
 
         return view;
     }

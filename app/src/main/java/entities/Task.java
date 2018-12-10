@@ -16,6 +16,9 @@ public class Task implements Parcelable {
     @ColumnInfo(name = "description")
     private String description;
 
+    @ColumnInfo(name = "achieved")
+    private boolean achieved;
+
     public long getId() {
         return id;
     }
@@ -40,14 +43,22 @@ public class Task implements Parcelable {
         this.description = description;
     }
 
-    public Task() {
+    public boolean getAchieved() {
+        return achieved;
+    }
 
+    public void setAchieved(boolean achieved) {
+        this.achieved = achieved;
+    }
+
+    public Task() {
     }
 
     public Task(Parcel in) {
         this.id = in.readLong();
         this.title = in.readString();
         this.description = in.readString();
+        this.achieved = in.readInt() == 1;
     }
 
     @Override
@@ -60,6 +71,7 @@ public class Task implements Parcelable {
         dest.writeLong(this.getId());
         dest.writeString(this.getTitle());
         dest.writeString(this.getDescription());
+        dest.writeInt(this.getAchieved() ? 1 : 0);
     }
 
     public static final Parcelable.Creator<Task> CREATOR

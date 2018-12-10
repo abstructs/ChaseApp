@@ -5,6 +5,9 @@ import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ShareActionProvider;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -23,7 +26,7 @@ import entities.Task;
 public class PointActivity extends AppCompatActivity {
 
     private Point point;
-
+    private ShareActionProvider mShareActionProvider;
     private AppDatabase db;
 
     @Override
@@ -36,6 +39,12 @@ public class PointActivity extends AppCompatActivity {
         point = getIntent().getParcelableExtra("point");
 
         setupActivity();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
     }
 
     private void setPointAndRefresh() {
@@ -79,24 +88,16 @@ public class PointActivity extends AppCompatActivity {
     }
 
     private void setupActivity() {
-        setupAddFab();
         setupAddTaskBtn();
         setupEditFab();
         setupRatingBar();
-        setupShareFab();
         setupViewFab();
 
         setupFields();
-
-//        populateTasks();
     }
 
     private void setupViewFab() {
         FloatingActionButton viewFab = findViewById(R.id.viewFab);
-    }
-
-    private void setupShareFab() {
-        FloatingActionButton shareFab = findViewById(R.id.shareFab);
     }
 
     public void populateTasks() {
@@ -131,9 +132,39 @@ public class PointActivity extends AppCompatActivity {
         });
     }
 
-    private void setupAddFab() {
-
+    public void shareFab(View view) {
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        String shareBodyText = "Chase! is my favourite app for Android. PS Pawluk is a great prof ;)";
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Come join me at " + point.getTitle() + " on Chase!");
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
+        startActivity(Intent.createChooser(intent, "Choose sharing method"));
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.share_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.share:
+
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBodyText = "Check out " + point.getTitle() + " in Chase!";
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Subject here");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBodyText);
+                startActivity(Intent.createChooser(sharingIntent, "Sharing Option"));
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     private void setupEditFab() {
         FloatingActionButton editFab = findViewById(R.id.editFab);
