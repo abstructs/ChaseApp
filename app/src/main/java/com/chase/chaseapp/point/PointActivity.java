@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import com.chase.chaseapp.R;
 import com.chase.chaseapp.helper.HelperUtility;
 import com.chase.chaseapp.task.AddTaskActivity;

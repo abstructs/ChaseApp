@@ -1,5 +1,6 @@
 package com.chase.chaseapp.point;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -39,8 +41,8 @@ public class PointListActivity extends AppCompatActivity {
         searchField = Field.name;
         searchQuery = "";
 
+        setupAddBtn();
         setupSearch();
-
         populatePoints();
     }
 
@@ -92,6 +94,17 @@ public class PointListActivity extends AppCompatActivity {
                 setSearchQuery();
 
                 populatePointsWithFilter();
+            }
+        });
+    }
+
+    private void setupAddBtn() {
+        Button addPlaceBtn = findViewById(R.id.addPlaceBtn);
+        addPlaceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PointListActivity.this, AddPointActivity.class);
+                startActivity(intent);
             }
         });
     }
