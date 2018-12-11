@@ -17,7 +17,7 @@
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintTop_toTopOf="parent"
-        tools:context=".map.PlacesActivity" />
+        tools:context=".MainActivity" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="56dp"
@@ -35,6 +35,17 @@
             android:layout_marginBottom="8dp"
             android:background="@drawable/round_button"
             android:src="@drawable/ic_team"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageButton
+            android:id="@+id/directionsFab"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="7dp"
+            android:background="@drawable/round_button"
+            android:src="@drawable/ic_navigation"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

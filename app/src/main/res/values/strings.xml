@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">ChaseApp</string>
+    <string name="app_name">Chase</string>
     <string name="title_activity_maps" tools:ignore="ExtraTranslation">Map</string>
     <string name="team_name">TeamName</string>
     <string name="members">Members</string>
@@ -32,8 +32,4 @@
         <item>Group</item>
         <item>Individual</item>
     </string-array>
-
-    <string name="title_activity_maps2">Map</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="title_activity_places">Map</string>
 </resources>

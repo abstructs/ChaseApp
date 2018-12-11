@@ -29,8 +29,6 @@ public class MapMarkerAdapter implements GoogleMap.InfoWindowAdapter {
         if(marker != null) {
             title = view.findViewById(R.id.titleText);
             address = view.findViewById(R.id.addressText);
-//            details = view.findViewById(R.id.btn_details);
-//            directions = view.findViewById(R.id.btn_directions);
 
             Point point = (Point) marker.getTag();
 

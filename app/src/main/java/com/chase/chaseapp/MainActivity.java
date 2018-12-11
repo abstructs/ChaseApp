@@ -49,40 +49,61 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private HelperUtility helperUtility;
     private AppDatabase db;
 
+    private boolean intentHasPointExtra;
     private boolean isFabOpen;
-    private ImageButton menuFab, listFab, addFab, teamFab, locationFab;
+    private ImageButton menuFab, listFab, addFab, teamFab, locationFab, directionsFab;
 
     private String locationProvider;
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
-    static final int ADD_POINT_REQUEST = 1;
+    private static final int ADD_POINT_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initMap();
+
+        db = AppDatabase.getAppDatabase(getApplicationContext());
+        helperUtility = new HelperUtility(getApplicationContext());
+    }
+
+    private void initMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(MainActivity.this);
 
-        db = AppDatabase.getAppDatabase(getApplicationContext());
-        helperUtility = new HelperUtility(getApplicationContext());
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+    }
 
-        setupFabMenu();
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        intentHasPointExtra = getIntent().hasExtra("point");
+
+        if (mMap == null)
+            initMap();
+
+        clearMarkersFromMap();
+
+        if (intentHasPointExtra) {
+            getPointThenAddToMap();
+        } else {
+            populatePointsThenAddToMap();
+        }
+
+        // setupFabMenu(); <-- also called in setup map
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        if(isFabOpen) {
-            float degrees = menuFab.getRotation() + 180F;
-            menuFab.animate().rotation(degrees).setInterpolator(new AccelerateDecelerateInterpolator());
-            closeFabMenu();
-        }
+        if(isFabOpen)
+            menuFab.performClick();
     }
 
     private void addPointToMap(Point point) {
@@ -96,12 +117,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void getPointThenAddToMap() {
+        class GetPoint extends AsyncTask<Void, Void, Point> {
+            @Override
+            protected Point doInBackground(Void... params) {
+                Point point = getIntent().getParcelableExtra("point");
+                return db.pointDao().getOne(point.getId());
+            }
+            @Override
+            protected void onPostExecute(Point point) {
+//                mMap.clear();
+                addPointToMap(point);
+                moveMapCameraToPoint(point);
+            }
+        }
+        new GetPoint().execute();
+    }
 
-        clearMarkersFromMap();
-        populatePointsThenAddToMap();
+    private void moveMapCameraToPoint(Point point) {
+        Location location = new Location(locationProvider);
+        location.setLatitude(point.getLatitude());
+        location.setLongitude(point.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
     }
 
     private void clearMarkersFromMap() {
@@ -130,10 +167,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                Point point = (Point) marker.getTag();
-                Intent intent = new Intent(MainActivity.this, PointActivity.class);
-                intent.putExtra("point", point);
-                startActivity(intent);
+                if(intentHasPointExtra) {
+                    finish();
+                } else {
+                    Point point = (Point) marker.getTag();
+                    Intent intent = new Intent(MainActivity.this, PointActivity.class);
+                    intent.putExtra("point", point);
+                    startActivity(intent);
+                }
             }
         });
     }
@@ -144,8 +185,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private void showFabMenu() {
+    private void openMainFabMenu() {
         isFabOpen = true;
+
+        float degrees = menuFab.getRotation() + 180F;
+        menuFab.animate().rotation(degrees).setInterpolator(new AccelerateDecelerateInterpolator());
 
         locationFab.animate().translationY(-getResources().getDimension(R.dimen.standard_60));
         listFab.animate().translationY(-getResources().getDimension(R.dimen.standard_110));
@@ -153,13 +197,60 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         addFab.animate().translationY(-getResources().getDimension(R.dimen.standard_210));
     }
 
-    private void closeFabMenu() {
+    private void closeMainFabMenu() {
         isFabOpen = false;
+
+        float degrees = menuFab.getRotation() + 180F;
+        menuFab.animate().rotation(degrees).setInterpolator(new AccelerateDecelerateInterpolator());
 
         locationFab.animate().translationY(0);
         listFab.animate().translationY(0);
         teamFab.animate().translationY(0);
         addFab.animate().translationY(0);
+    }
+
+    private void openPointFabMenu() {
+        isFabOpen = true;
+
+        float degrees = menuFab.getRotation() + 180F;
+        menuFab.animate().rotation(degrees).setInterpolator(new AccelerateDecelerateInterpolator());
+
+        locationFab.animate().translationY(-getResources().getDimension(R.dimen.standard_60));
+        directionsFab.animate().translationY(-getResources().getDimension(R.dimen.standard_110));
+    }
+
+    private void closePointFabMenu() {
+        isFabOpen = false;
+
+        float degrees = menuFab.getRotation() + 180F;
+        menuFab.animate().rotation(degrees).setInterpolator(new AccelerateDecelerateInterpolator());
+
+        locationFab.animate().translationY(0);
+        directionsFab.animate().translationY(0);
+    }
+
+    private void setMainFabMenuOnClick() {
+        menuFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isFabOpen)
+                    openMainFabMenu();
+                else
+                    closeMainFabMenu();
+            }
+        });
+    }
+
+    private void setPointFabMenuOnClick() {
+        menuFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!isFabOpen)
+                    openPointFabMenu();
+                else
+                    closePointFabMenu();
+            }
+        });
     }
 
     private void setupFabMenu() {
@@ -168,19 +259,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         addFab = findViewById(R.id.addFab);
         teamFab = findViewById(R.id.teamFab);
         locationFab = findViewById(R.id.myLocationFab);
-
-        menuFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                float degrees = menuFab.getRotation() + 180F;
-                menuFab.animate().rotation(degrees).setInterpolator(new AccelerateDecelerateInterpolator());
-
-                if (!isFabOpen)
-                    showFabMenu();
-                else
-                    closeFabMenu();
-            }
-        });
+        directionsFab = findViewById(R.id.directionsFab);
 
         listFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -206,6 +285,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 startActivity(intent);
             }
         });
+
+        locationFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                moveMapCameraToLocation(getLastKnownLocation());
+            }
+        });
+
+        directionsFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //get directions
+            }
+        });
+
+        if(intentHasPointExtra)
+            setPointFabMenuOnClick();
+        else
+            setMainFabMenuOnClick();
     }
 
     private String getLocationProvider() {
@@ -281,10 +379,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void setupMap() throws SecurityException {
         mMap.setMyLocationEnabled(true);
         mMap.setInfoWindowAdapter(new MapMarkerAdapter(MainActivity.this));
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+        mMap.getUiSettings().setMapToolbarEnabled(false);
 
         locationProvider = getBestProvider();
 
-        populatePointsThenAddToMap();
+        if(intentHasPointExtra)
+            getPointThenAddToMap();
+        else
+            populatePointsThenAddToMap();
+
+        setupFabMenu();
 
         setMapMarkerOnClick();
 
@@ -294,7 +399,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         if(grantedLocationPermissions()) {
             try {
                 setupMap();

@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.chase.chaseapp.MainActivity;
 import com.chase.chaseapp.R;
 import com.chase.chaseapp.helper.HelperUtility;
 import com.chase.chaseapp.task.AddTaskActivity;
@@ -104,6 +105,14 @@ public class PointActivity extends AppCompatActivity {
 
     private void setupViewFab() {
         FloatingActionButton viewFab = findViewById(R.id.viewFab);
+        viewFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PointActivity.this, MainActivity.class);
+                intent.putExtra("point", point);
+                startActivity(intent);
+            }
+        });
     }
 
     public void populateTasks() {
