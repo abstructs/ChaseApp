@@ -19,7 +19,7 @@ import entities.Member;
 import entities.Point;
 import entities.Task;
 
-@Database(entities = { Point.class, Task.class, Member.class}, version = 1)
+@Database(entities = { Point.class, Task.class, Member.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
@@ -37,7 +37,7 @@ public abstract class AppDatabase extends RoomDatabase {
         p1.setAddress("1675 Lake Shore Blvd E, Toronto, ON");
         p1.setLongitude(-79.311180);
         p1.setLatitude(43.661550);
-        p1.setTag("Outdoor");
+        p1.setTag("Outdoors");
         p1.setRating(5);
 
         Point p2 = new Point();
@@ -53,7 +53,7 @@ public abstract class AppDatabase extends RoomDatabase {
         p3.setAddress("160 Gerrard St E, Toronto, ON");
         p3.setLongitude(-79.371430);
         p3.setLatitude(43.661410);
-        p3.setTag("Nature");
+        p3.setTag("Walkable");
         p3.setRating(2);
 
         Point p4 = new Point();
@@ -61,7 +61,7 @@ public abstract class AppDatabase extends RoomDatabase {
         p4.setAddress("45 Esandar Dr Unit 1A, Toronto, ON");
         p4.setLongitude(-79.359170);
         p4.setLatitude(43.705630);
-        p4.setTag("Indoor");
+        p4.setTag("Indoors");
         p4.setRating(5);
 
         points.add(p1);

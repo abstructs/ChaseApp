@@ -15,4 +15,7 @@ import entities.Task;
 public interface PointTaskDao {
     @Query("SELECT * FROM Task WHERE point_id = :point_id")
     List<Task> getAll(long point_id);
+
+    @Query("DELETE FROM Task WHERE point_id = :point_id")
+    void deleteAllTasks(long point_id);
 }

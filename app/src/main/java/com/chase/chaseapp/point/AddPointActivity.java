@@ -37,14 +37,15 @@ public class AddPointActivity extends AppCompatActivity {
     }
 
     private void setupSaveBtn() {
-        Button saveBtn = findViewById(R.id.saveBtn);
+        final Button saveBtn = findViewById(R.id.saveBtn);
 
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    if(formIsValid())
+                    if(formIsValid()) {
                         savePointThenFinish(getPoint());
+                    }
                     else
                         showErrorToast();
                 } catch(IOException e) {

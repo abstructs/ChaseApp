@@ -1,8 +1,10 @@
 package com.chase.chaseapp.point;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.ShareActionProvider;
@@ -15,6 +17,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.chase.chaseapp.R;
+import com.chase.chaseapp.helper.HelperUtility;
 import com.chase.chaseapp.task.AddTaskActivity;
 
 import java.util.ArrayList;
@@ -28,6 +31,7 @@ public class PointActivity extends AppCompatActivity {
     private Point point;
     private ShareActionProvider mShareActionProvider;
     private AppDatabase db;
+    private HelperUtility helperUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +39,7 @@ public class PointActivity extends AppCompatActivity {
         setContentView(R.layout.activity_point);
 
         db = AppDatabase.getAppDatabase(getApplicationContext());
+        helperUtility = new HelperUtility(PointActivity.this);
 
         point = getIntent().getParcelableExtra("point");
 
@@ -89,6 +94,7 @@ public class PointActivity extends AppCompatActivity {
 
     private void setupActivity() {
         setupAddTaskBtn();
+        setupDeleteBtn();
         setupEditFab();
         setupRatingBar();
         setupViewFab();
@@ -121,7 +127,7 @@ public class PointActivity extends AppCompatActivity {
     }
 
     private void setupAddTaskBtn() {
-        Button addTaskBtn = findViewById(R.id.addTaskBtn);
+        FloatingActionButton addTaskBtn = findViewById(R.id.addTaskFab);
 
         addTaskBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,6 +139,46 @@ public class PointActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void setupDeleteBtn() {
+        Button deleteButton = findViewById(R.id.deleteBtn);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDeleteDialog();
+            }
+        });
+    }
+
+    private void showDeleteDialog() {
+        AlertDialog.Builder dialogBuilder = helperUtility.buildDialog("Delete Point",
+                "Are you sure you wish to delete this point?");
+        dialogBuilder.setPositiveButton("Confirm", getDialogListener());
+        dialogBuilder.create().show();
+    }
+
+    private DialogInterface.OnClickListener getDialogListener() {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                class DeletePoint extends AsyncTask<Void, Void, Boolean> {
+                    @Override
+                    protected Boolean doInBackground(Void... voids) {
+                        db.pointTaskDao().deleteAllTasks(point.getId());
+                        db.pointDao().deleteOne(point);
+                        return true;
+                    }
+                    @Override
+                    protected void onPostExecute(Boolean aBoolean) {
+                        helperUtility.showToast("Point deleted");
+                        finish();
+                    }
+                }
+
+                new DeletePoint().execute();
+            }
+        };
     }
 
     public void shareFab(View view) {
@@ -170,7 +216,7 @@ public class PointActivity extends AppCompatActivity {
 
 
     private void setupEditFab() {
-        FloatingActionButton editFab = findViewById(R.id.editFab);
+        Button editFab = findViewById(R.id.editBtn);
 
         editFab.setOnClickListener(new View.OnClickListener() {
             @Override

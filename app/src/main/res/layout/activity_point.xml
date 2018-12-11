@@ -101,7 +101,7 @@
                 app:srcCompat="@drawable/view_icon" />
 
             <android.support.design.widget.FloatingActionButton
-                android:id="@+id/editFab"
+                android:id="@+id/addTaskFab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -111,7 +111,7 @@
                 android:scaleType="center"
                 app:backgroundTint="@color/colorPrimary"
                 app:fabSize="mini"
-                app:srcCompat="@drawable/edit_icon" />
+                app:srcCompat="@drawable/ic_plus" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/shareFab"
@@ -162,19 +162,48 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
-            android:orientation="vertical">
+            android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/addTaskBtn"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@color/colorSecondary"
-                android:text="Add Task"
-                android:textColor="@color/colorSecondaryText" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="start"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/deleteBtn"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/colorSecondary"
+                    android:text="Delete"
+                    android:textColor="@color/colorSecondaryText" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/editBtn"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/colorSecondary"
+                    android:text="Edit"
+                    android:textColor="@color/colorSecondaryText" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
     </LinearLayout>

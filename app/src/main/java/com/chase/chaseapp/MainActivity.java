@@ -100,7 +100,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onResume() {
         super.onResume();
 
+        clearMarkersFromMap();
         populatePointsThenAddToMap();
+    }
+
+    private void clearMarkersFromMap() {
+        if(mMap != null) {
+            mMap.clear();
+        }
     }
 
     private void populatePointsThenAddToMap() {
