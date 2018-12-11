@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.chase.chaseapp.R;
 
 import database.AppDatabase;
+import entities.Point;
 import entities.Task;
 
 public class AddTaskActivity extends AppCompatActivity {
@@ -28,6 +29,10 @@ public class AddTaskActivity extends AppCompatActivity {
 
         task = new Task();
 
+        Point point = getIntent().getParcelableExtra("point");
+
+        task.setPointId(point.getId());
+
         setupSaveBtn();
     }
 
@@ -37,8 +42,12 @@ public class AddTaskActivity extends AppCompatActivity {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setTask();
-                saveTaskAndFinish();
+                if(formIsValid()) {
+                    setTask();
+                    saveTaskAndFinish();
+                } else {
+                    showErrorToast();
+                }
             }
         });
     }
@@ -84,12 +93,8 @@ public class AddTaskActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Boolean aBoolean) {
-                if(formIsValid()) {
-                    showSuccessToast();
-                    finish();
-                } else {
-                    showErrorToast();
-                }
+                showSuccessToast();
+                finish();
             }
         }
 

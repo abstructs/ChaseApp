@@ -106,7 +106,7 @@ public class PointActivity extends AppCompatActivity {
         class GetTasks extends AsyncTask<Void, Void, ArrayList<Task>> {
             @Override
             protected ArrayList<Task> doInBackground(Void... voids) {
-                return new ArrayList<>(db.taskDao().getAll());
+                return new ArrayList<>(db.pointTaskDao().getAll(point.getId()));
             }
 
             @Override
@@ -126,6 +126,9 @@ public class PointActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PointActivity.this, AddTaskActivity.class);
+
+                intent.putExtra("point", point);
+
                 startActivity(intent);
             }
         });

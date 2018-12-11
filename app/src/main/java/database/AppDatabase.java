@@ -5,6 +5,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import dao.PointDao;
+import dao.PointTaskDao;
 import dao.TaskDao;
 import dao.MemberDao;
 import entities.Member;
@@ -17,8 +18,8 @@ public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase INSTANCE;
 
     public abstract PointDao pointDao();
-
     public abstract TaskDao taskDao();
+    public abstract PointTaskDao pointTaskDao();
     public abstract MemberDao memberDao();
 
 

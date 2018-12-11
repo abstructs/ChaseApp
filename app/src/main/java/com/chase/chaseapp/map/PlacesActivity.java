@@ -220,7 +220,7 @@ public class PlacesActivity extends FragmentActivity implements OnMapReadyCallba
                 goToMyLocation();
             }
         });
-        // ??????
+
         googleLocationButton = ((View)mapFragment.getView().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
         if(googleLocationButton != null)
             googleLocationButton.setVisibility(View.GONE);

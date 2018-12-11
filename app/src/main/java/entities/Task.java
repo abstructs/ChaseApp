@@ -16,6 +16,17 @@ public class Task implements Parcelable {
     @ColumnInfo(name = "description")
     private String description;
 
+    @ColumnInfo(name = "point_id")
+    private long pointId;
+
+    public long getPointId() {
+        return pointId;
+    }
+
+    public void setPointId(long pointId) {
+        this.pointId = pointId;
+    }
+
     public long getId() {
         return id;
     }
@@ -46,6 +57,7 @@ public class Task implements Parcelable {
 
     public Task(Parcel in) {
         this.id = in.readLong();
+        this.pointId = in.readLong();
         this.title = in.readString();
         this.description = in.readString();
     }
@@ -58,6 +70,7 @@ public class Task implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(this.getId());
+        dest.writeLong(this.getPointId());
         dest.writeString(this.getTitle());
         dest.writeString(this.getDescription());
     }
