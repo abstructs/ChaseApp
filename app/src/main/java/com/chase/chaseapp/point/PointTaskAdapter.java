@@ -119,35 +119,50 @@ public class PointTaskAdapter extends BaseAdapter {
                 db.taskDao().updateOne(task);
                 return true;
             }
+
+            @Override
+            protected void onPostExecute(Boolean aBoolean) {
+                if(task.getAchieved())
+                    helperUtility.showToast("Task achieved!");
+            }
         }
 
         new MarkAchievement().execute();
     }
 
+    private void setupAchievement(View view, Task task) {
+        CheckBox achievedCheckBox = view.findViewById(R.id.achieved_id);
+
+        TextView titleText = view.findViewById(R.id.titleText);
+        TextView descriptionText = view.findViewById(R.id.descriptionText);
+
+        if(achievedCheckBox.isChecked()) {
+            task.setAchieved(true);
+            titleText.setTextColor(Color.GREEN);
+            descriptionText.setTextColor(Color.GREEN);
+            titleText.setTypeface(null, Typeface.BOLD);
+        } else {
+            task.setAchieved(false);
+            titleText.setTextColor(Color.BLACK);
+            descriptionText.setTextColor(Color.BLACK);
+            titleText.setTypeface(null, Typeface.NORMAL);
+        }
+    }
+
+
     public void setupCheckBox(final View view, final Task task) {
 
         final CheckBox achievedCheckBox = view.findViewById(R.id.achieved_id);
 
+        achievedCheckBox.setChecked(task.getAchieved());
+
+        setupAchievement(view, task);
+
         achievedCheckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView titleText = view.findViewById(R.id.titleText);
-                TextView descriptionText = view.findViewById(R.id.descriptionText);
-
-                if(achievedCheckBox.isChecked()) {
-                    task.setAchieved(true);
-                    titleText.setTextColor(Color.GREEN);
-                    descriptionText.setTextColor(Color.GREEN);
-                    titleText.setTypeface(null, Typeface.BOLD);
-                    helperUtility.showToast("Task achieved!");
-                } else {
-                    task.setAchieved(false);
-                    titleText.setTextColor(Color.BLACK);
-                    descriptionText.setTextColor(Color.BLACK);
-                    titleText.setTypeface(null, Typeface.NORMAL);
-                }
-
                 updateTask(task);
+                setupAchievement(view, task);
             }
         });
     }

@@ -39,8 +39,20 @@ public class HelperUtility {
         Pattern VALID_EMAIL_ADDRESS_REGEX =
                 Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(email);
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
         return matcher.find();
+    }
+
+    public int indexOf(String element, String[] items) {
+        int i = 0;
+        for(String item : items) {
+            if(item.equals(element))
+                return i;
+
+            i++;
+        }
+
+        return -1;
     }
 
 }

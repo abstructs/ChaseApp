@@ -30,5 +30,5 @@ public interface PointDao {
     void updateRating(long id, int rating);
 
     @Insert(onConflict=OnConflictStrategy.REPLACE)
-    void insertOne(Point point);
+    long insertOne(Point point);
 }

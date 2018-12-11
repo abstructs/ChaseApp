@@ -109,6 +109,7 @@ public class AddPointActivity extends AppCompatActivity {
         class InsertPoint extends AsyncTask<Void, Void, Boolean> {
             @Override
             protected Boolean doInBackground(Void... params) {
+                //crash occurs here
                 db.pointDao().insertOne(point);
                 return true;
             }

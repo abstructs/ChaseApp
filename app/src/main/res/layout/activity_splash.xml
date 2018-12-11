@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minHeight="34dp"
+    android:background="@color/colorPrimaryLight"
+    tools:context=".SplashActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
+            android:text="Chase"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="@color/white"
+            android:textSize="45sp"
+            android:textStyle="bold"
+            android:typeface="monospace"
+            app:fontFamily="sans-serif" />
+
+        <ImageView
+            android:id="@+id/chaseLogo"
+            android:layout_width="match_parent"
+            android:layout_height="230dp"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="75dp"
+            android:layout_marginRight="100dp"
+            android:src="@drawable/chaseapp_logo" />
+
+        <TextView
+            android:id="@+id/subTitleText"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:text="Chase your dreams"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            android:typeface="monospace"
+            app:fontFamily="sans-serif" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

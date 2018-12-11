@@ -32,4 +32,8 @@
         <item>Group</item>
         <item>Individual</item>
     </string-array>
+
+    <string name="title_activity_maps2">Map</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_places">Map</string>
 </resources>
