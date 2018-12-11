@@ -123,23 +123,6 @@ public abstract class AppDatabase extends RoomDatabase {
         return tasks;
     }
 
-//    private static ArrayList<ArrayList<Task>> getTaskList(ArrayList<Task>) {
-//        ArrayList<ArrayList<Task>> taskList = new ArrayList<>();
-//
-//        //for i in range 4
-//        //make new array list
-//        //for each task in tasks
-//        //set taskid to i (starts at pone)
-//        //add task to the new array list you just made
-//        //at the end add that array list to tasklist
-//
-//        Task
-//
-//
-//
-//        return taskList;
-//    }
-
     private static ArrayList<Member> getMembers() {
         ArrayList<Member> members = new ArrayList<>();
 
@@ -193,10 +176,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             Executors.newSingleThreadExecutor().execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    for(int i = 0; i < points.size(); i++) {
-                                        long pointId = INSTANCE.pointDao().insertOne(points.get(i));
-                                        Task task = tasks.get(i);
-                                        task.setId(pointId);
+                                    for(Point point : points) {
+                                        INSTANCE.pointDao().insertOne(point);
                                     }
 
                                     for(Task task : tasks) {

@@ -8,13 +8,13 @@ import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chase.chaseapp.R;
 import com.chase.chaseapp.helper.HelperUtility;
@@ -31,6 +31,7 @@ public class PointTaskAdapter extends BaseAdapter {
     private ArrayList<Task> tasks;
     private Context context;
     private HelperUtility helperUtility;
+    private String colorAchieved = "#60ad5e";
 
     PointTaskAdapter(Context context, ArrayList<Task> tasks) {
         this.context = context;
@@ -99,13 +100,29 @@ public class PointTaskAdapter extends BaseAdapter {
         new DeleteTask().execute();
     }
 
-    private void setupDelete(View view, final Task task) {
+    private void showDeleteDialog(Task task) {
+        AlertDialog.Builder dialogBuilder = helperUtility.buildDialog("Delete Task",
+                "Are you sure you wish to delete this task?");
+        dialogBuilder.setPositiveButton("Confirm", getDialogListener(task));
+        dialogBuilder.create().show();
+    }
+
+    private DialogInterface.OnClickListener getDialogListener(final Task task) {
+        return new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteTask(task);
+            }
+        };
+    }
+
+    private void setupDeleteBtn(View view, final Task task) {
         FloatingActionButton deleteFab = view.findViewById(R.id.deleteFab);
 
         deleteFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteTask(task);
+                showDeleteDialog(task);
             }
         });
     }
@@ -129,15 +146,15 @@ public class PointTaskAdapter extends BaseAdapter {
     }
 
     private void setupAchievement(View view, Task task) {
-        CheckBox achievedCheckBox = view.findViewById(R.id.achieved_id);
+        AppCompatCheckBox achievedCheckBox = view.findViewById(R.id.achieved_id);
 
         TextView titleText = view.findViewById(R.id.titleText);
         TextView descriptionText = view.findViewById(R.id.descriptionText);
 
         if(achievedCheckBox.isChecked()) {
             task.setAchieved(true);
-            titleText.setTextColor(Color.GREEN);
-            descriptionText.setTextColor(Color.GREEN);
+            titleText.setTextColor(Color.parseColor(colorAchieved));
+            descriptionText.setTextColor(Color.parseColor(colorAchieved));
             titleText.setTypeface(null, Typeface.BOLD);
         } else {
             task.setAchieved(false);
@@ -146,7 +163,6 @@ public class PointTaskAdapter extends BaseAdapter {
             titleText.setTypeface(null, Typeface.NORMAL);
         }
     }
-
 
     public void setupCheckBox(final View view, final Task task) {
 
@@ -176,7 +192,7 @@ public class PointTaskAdapter extends BaseAdapter {
         populateFields(view, task);
         setupCheckBox(view, task);
         setupEditFab(view, task);
-        setupDelete(view, task);
+        setupDeleteBtn(view, task);
 
         return view;
     }

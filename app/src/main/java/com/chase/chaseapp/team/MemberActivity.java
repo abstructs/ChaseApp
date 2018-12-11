@@ -7,8 +7,14 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.support.v7.app.AlertDialog;
+
+import com.chase.chaseapp.MainActivity;
 import com.chase.chaseapp.R;
 
 import android.support.v7.app.AppCompatActivity;
@@ -23,11 +29,12 @@ import com.chase.chaseapp.helper.HelperUtility;
 import database.AppDatabase;
 import entities.Member;
 
-public class MemberActivity extends AppCompatActivity {
+public class MemberActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private Member member;
     private AppDatabase db;
     private HelperUtility helperUtility;
+    private final int MY_PERMISSIONS_REQUEST_PHONE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +49,7 @@ public class MemberActivity extends AppCompatActivity {
         setupFields();
         setupSendSms();
         setupSendEmail();
+        setupPhoneBtn();
     }
 
     @Override
@@ -54,6 +62,7 @@ public class MemberActivity extends AppCompatActivity {
         setupDeleteBtn();
         setupEditBtn();
         setupSendSms();
+        setupPhoneBtn();
     }
 
 
@@ -94,8 +103,73 @@ public class MemberActivity extends AppCompatActivity {
         bannerImage.setImageResource(imageId);
     }
 
-    private void setupSendSms() {
+
+    private boolean grantedPhonePermissions() {
+        if(Build.VERSION.SDK_INT >= 23) {
+            return checkSelfPermission(Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            int phonePermission = PermissionChecker.checkSelfPermission(MemberActivity.this, Manifest.permission.CALL_PHONE);
+            return phonePermission == PermissionChecker.PERMISSION_GRANTED;
+        }
+    }
+
+    private void requestPhonePermission() {
+        if(Build.VERSION.SDK_INT >= 23) {
+            requestPermissions(new String[]{ Manifest.permission.CALL_PHONE },
+                    MY_PERMISSIONS_REQUEST_PHONE);
+        } else {
+            ActivityCompat.requestPermissions(MemberActivity.this, new String[]{ Manifest.permission.CALL_PHONE },
+                    MY_PERMISSIONS_REQUEST_PHONE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        int providerIndex = helperUtility.indexOf(Manifest.permission.CALL_PHONE, permissions);
+
+        if(providerIndex == -1)
+            return;
+
+        boolean permissionGranted = grantResults[providerIndex] == PermissionChecker.PERMISSION_GRANTED;
+
+        switch(requestCode) {
+            case MY_PERMISSIONS_REQUEST_PHONE:
+                if(permissionGranted)
+                    callMember();
+                else
+                    helperUtility.showToast("Phone permission is required to make a call.");
+                break;
+        }
+    }
+
+    private void callMember() {
+        try {
+            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + member.getPhoneNumber()));
+            startActivity(intent);
+        } catch(SecurityException e) {
+            e.printStackTrace();
+            helperUtility.showToast("Something went wrong, try again.");
+        }
+    }
+
+    private void setupPhoneBtn() {
         Button smsButton = findViewById(R.id.phoneBtn);
+        smsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(grantedPhonePermissions()) {
+                    callMember();
+                } else {
+                    requestPhonePermission();
+                }
+            }
+        });
+    }
+
+    private void setupSendSms() {
+        Button smsButton = findViewById(R.id.smsBtn);
         smsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,7 +221,7 @@ public class MemberActivity extends AppCompatActivity {
 
     private void showDeleteDialog() {
         AlertDialog.Builder dialogBuilder = helperUtility.buildDialog("Delete Member",
-                "Are you sure you wish to delete member?");
+                "Are you sure you wish to delete " + member.getName() + "?");
         dialogBuilder.setPositiveButton("Confirm", getDialogListener());
         dialogBuilder.create().show();
     }

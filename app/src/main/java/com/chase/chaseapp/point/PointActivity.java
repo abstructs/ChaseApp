@@ -109,23 +109,23 @@ public class PointActivity extends AppCompatActivity {
     }
 
     public void populateTasks() {
-//
-//        final ListView taskList = findViewById(R.id.taskList);
-//
-//        class GetTasks extends AsyncTask<Void, Void, ArrayList<Task>> {
-//            @Override
-//            protected ArrayList<Task> doInBackground(Void... voids) {
-//                return new ArrayList<>(db.pointTaskDao().getAll(point.getId()));
-//            }
-//
-//            @Override
-//            protected void onPostExecute(ArrayList<Task> tasks) {
-//                PointTaskAdapter pointTaskAdapter = new PointTaskAdapter(PointActivity.this, tasks);
-//                taskList.setAdapter(pointTaskAdapter);
-//            }
-//        }
-//
-//        new GetTasks().execute();
+
+        final ListView taskList = findViewById(R.id.taskList);
+
+        class GetTasks extends AsyncTask<Void, Void, ArrayList<Task>> {
+            @Override
+            protected ArrayList<Task> doInBackground(Void... voids) {
+                return new ArrayList<>(db.pointTaskDao().getAll(point.getId()));
+            }
+
+            @Override
+            protected void onPostExecute(ArrayList<Task> tasks) {
+                PointTaskAdapter pointTaskAdapter = new PointTaskAdapter(PointActivity.this, tasks);
+                taskList.setAdapter(pointTaskAdapter);
+            }
+        }
+
+        new GetTasks().execute();
     }
 
     private void setupAddTaskBtn() {

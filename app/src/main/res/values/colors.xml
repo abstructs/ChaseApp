@@ -6,13 +6,13 @@
     <color name="appBackground">@color/white</color>
     <color name="appText">@color/white</color>
 
-    <color name="colorPrimary">#2e7d32</color>
+    <color name="colorPrimary">#6a1b9a</color>
     <color name="colorPrimaryText">@color/white</color>
 
-    <color name="colorPrimaryLight">#60ad5e</color>
+    <color name="colorPrimaryLight">#9c4dcc</color>
     <color name="colorPrimaryLightText">@color/black</color>
 
-    <color name="colorPrimaryDark">#005005</color>
+    <color name="colorPrimaryDark">#38006b</color>
     <color name="colorPrimaryDarkText">@color/white</color>
 
     <color name="colorSecondary">#37474f</color>
@@ -28,4 +28,6 @@
 
     <color name="starDefaultColor">@color/colorSecondaryLight</color>
     <color name="starActivatedColor">#F57F17</color>
+
+    <color name="colorAchieved">#FF2E7D32</color>
 </resources>
