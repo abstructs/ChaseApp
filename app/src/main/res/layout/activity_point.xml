@@ -124,7 +124,8 @@
                 android:scaleType="center"
                 app:backgroundTint="@color/colorPrimary"
                 app:fabSize="mini"
-                app:srcCompat="@drawable/share_icon" />
+                app:srcCompat="@drawable/share_icon"
+                android:onClick="shareFab"/>
 
         </LinearLayout>
 

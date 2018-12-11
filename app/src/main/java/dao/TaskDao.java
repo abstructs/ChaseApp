@@ -16,6 +16,10 @@ public interface TaskDao {
     @Query("SELECT * FROM Task")
     List<Task> getAll();
 
+    //    @Query("SELECT * FROM Point WHERE achieved=:achieved")
+    //    Task getAcheieved(int achieved);
+
+
     @Update
     void updateOne(Task task);
 

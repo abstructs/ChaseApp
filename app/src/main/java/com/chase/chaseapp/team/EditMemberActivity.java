@@ -6,16 +6,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
-
 import com.chase.chaseapp.R;
 import com.chase.chaseapp.helper.HelperUtility;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import database.AppDatabase;
 import entities.Member;
+
+import static com.chase.chaseapp.helper.HelperUtility.validateEmail;
 
 public class EditMemberActivity extends AppCompatActivity {
 
@@ -54,8 +50,6 @@ public class EditMemberActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(formIsValid())
                     updateMemberThenFinish();
-                else
-                    helperUtility.showToast("Please fill out the fields");
             }
         });
     }
@@ -98,18 +92,19 @@ public class EditMemberActivity extends AppCompatActivity {
         EditText phoneInput = findViewById(R.id.phoneInput);
         EditText emailInput = findViewById(R.id.emailInput);
 
-        return nameInput.getText().length() != 0
-                && phoneInput.getText().length() == 10
-                && validate(emailInput.getText().toString());
+        if(nameInput.getText().length() == 0) {
+            helperUtility.showToast("Please enter name");
+            return false;
+        }
+        if(phoneInput.getText().length() != 10) {
+            helperUtility.showToast("Please enter 10-digit phone number");
+            return false;
+        }
+        if(!validateEmail(emailInput.getText().toString())) {
+            helperUtility.showToast("Please enter valid email address");
+            return false;
+        }
+
+        return true;
     }
-
-    public static boolean validate(String email) {
-        Pattern VALID_EMAIL_ADDRESS_REGEX =
-                Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(email);
-        return matcher.find();
-    }
-
-
 }

@@ -1,16 +1,23 @@
 package com.chase.chaseapp.team;
+
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import com.chase.chaseapp.R;
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.chase.chaseapp.helper.HelperUtility;
 
 import database.AppDatabase;
@@ -33,6 +40,8 @@ public class MemberActivity extends AppCompatActivity {
 
         setupBtns();
         setupFields();
+        setupSendSms();
+        setupSendEmail();
     }
 
     @Override
@@ -44,6 +53,7 @@ public class MemberActivity extends AppCompatActivity {
     private void setupBtns() {
         setupDeleteBtn();
         setupEditBtn();
+        setupSendSms();
     }
 
 
@@ -82,6 +92,35 @@ public class MemberActivity extends AppCompatActivity {
         phoneNumberText.setText(member.getPhoneNumber());
         emailText.setText(member.getEmail());
         bannerImage.setImageResource(imageId);
+    }
+
+    private void setupSendSms() {
+        Button smsButton = findViewById(R.id.phoneBtn);
+        smsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("smsto:" + member.getPhoneNumber());
+                Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+                intent.putExtra("sms_body", "Hey " + member.getName()
+                        + "! \nLet's continue achieving our tasks on Chase™!");
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void setupSendEmail() {
+        Button emailButton = findViewById(R.id.emailBtn);
+        emailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse("mailto:" + member.getEmail());
+                Intent intent = new Intent(Intent.ACTION_SENDTO, uri);
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Help me with our Chase™ tasks!");
+                intent.putExtra(Intent.EXTRA_TEXT, "Hey " + member.getName()
+                        + "! \nLet's continue achieving our tasks on Chase™!");
+                startActivity(intent);
+            }
+        });
     }
 
     private DialogInterface.OnClickListener getDialogListener() {

@@ -1,30 +1,30 @@
 package com.chase.chaseapp.team;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 import com.chase.chaseapp.R;
-
+import com.chase.chaseapp.helper.HelperUtility;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import database.AppDatabase;
 import entities.Member;
+
+import static com.chase.chaseapp.helper.HelperUtility.validateEmail;
 
 public class AddMemberActivity extends AppCompatActivity {
 
     private AppDatabase db;
+    private HelperUtility helperUtility;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_member);
 
+        helperUtility = new HelperUtility(getApplicationContext());
         db = AppDatabase.getAppDatabase(getApplicationContext());
         setupSaveBtn();
     }
@@ -37,8 +37,6 @@ public class AddMemberActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if(formIsValid())
                     saveMemberThenFinish(getMember());
-                else
-                    showErrorToast();
             }
         });
     }
@@ -65,16 +63,6 @@ public class AddMemberActivity extends AppCompatActivity {
         return member;
     }
 
-    private void showErrorToast() {
-        Toast.makeText(getApplicationContext(), "Please fill out the fields.",
-                Toast.LENGTH_LONG).show();
-    }
-
-    private void showSuccessToast() {
-        Toast.makeText(getApplicationContext(), "Member has been added.",
-                Toast.LENGTH_LONG).show();
-    }
-
     private void saveMemberThenFinish(final Member member) {
         class InsertMember extends AsyncTask<Void, Void, Boolean> {
             @Override
@@ -85,7 +73,7 @@ public class AddMemberActivity extends AppCompatActivity {
 
             @Override
             protected void onPostExecute(Boolean res) {
-                showSuccessToast();
+                helperUtility.showToast("Member has been added");
                 finish();
             }
         }
@@ -98,16 +86,19 @@ public class AddMemberActivity extends AppCompatActivity {
         EditText phoneInput = findViewById(R.id.phoneInput);
         EditText emailInput = findViewById(R.id.emailInput);
 
-        return nameInput.getText().length() != 0
-                && phoneInput.getText().length() == 10
-                && validate(emailInput.getText().toString());
-    }
+        if(nameInput.getText().length() == 0) {
+            helperUtility.showToast("Please enter name");
+            return false;
+        }
+        if(phoneInput.getText().length() != 10) {
+            helperUtility.showToast("Please enter 10-digit phone number");
+            return false;
+        }
+        if(!validateEmail(emailInput.getText().toString())) {
+            helperUtility.showToast("Please enter valid email address");
+            return false;
+        }
 
-    public static boolean validate(String email) {
-        Pattern VALID_EMAIL_ADDRESS_REGEX =
-                Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
-
-        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX .matcher(email);
-        return matcher.find();
+        return true;
     }
 }

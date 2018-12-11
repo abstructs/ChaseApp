@@ -10,16 +10,29 @@
     <string name="email">email</string>
     <string name="add_member">Add Member</string>
     <string name="add_member_text">Add Member</string>
-    <string name="phone_number_input">Enter phone number</string>
+    <string name="phone_number_input">Enter 10-digit phone number</string>
     <string name="email_input">Enter email</string>
     <string name="edit_member_text">Edit Member</string>
 
     <string-array name="tags_array">
-        <item>Select A Tag</item>
-        <item>Photo Opportunity</item>
-        <item>Find An Item</item>
-        <item>Rest Spot</item>
+        <item>Select a tag</item>
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Difficult</item>
+        <item>Physical</item>
+        <item>Non-physical</item>
+        <item>Park</item>
+        <item>Walkable</item>
+        <item>Indoors</item>
+        <item>Outdoors</item>
+        <item>Dog-friendly</item>
+        <item>Kid-friendly</item>
+        <item>Downtown</item>
+        <item>Nature</item>
+        <item>Group</item>
+        <item>Individual</item>
     </string-array>
+
     <string name="title_activity_maps2">Map</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_places">Map</string>

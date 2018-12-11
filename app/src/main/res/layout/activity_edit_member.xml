@@ -57,7 +57,7 @@ tools:context=".team.EditMemberActivity">
             android:layout_marginRight="20dp"
             android:ems="10"
             android:hint="@string/phone_number_input"
-            android:inputType="textPersonName" />
+            android:inputType="number" />
 
         <EditText
             android:id="@+id/emailInput"
