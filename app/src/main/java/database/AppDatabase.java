@@ -19,7 +19,7 @@ import entities.Member;
 import entities.Point;
 import entities.Task;
 
-@Database(entities = { Point.class, Task.class, Member.class}, version = 1, exportSchema = false)
+@Database(entities = { Point.class, Task.class, Member.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
@@ -156,8 +156,10 @@ public abstract class AppDatabase extends RoomDatabase {
                             Executors.newSingleThreadExecutor().execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    for(Point point : points) {
-                                        INSTANCE.pointDao().insertOne(point);
+                                    for(int i = 0; i < points.size(); i++) {
+                                        long pointId = INSTANCE.pointDao().insertOne(points.get(i));
+                                        Task task = tasks.get(i);
+                                        task.setId(pointId);
                                     }
 
                                     for(Task task : tasks) {
@@ -182,8 +184,8 @@ public abstract class AppDatabase extends RoomDatabase {
 
             INSTANCE = Room
                     .databaseBuilder(context.getApplicationContext(), AppDatabase.class, "chase-database")
-                    .fallbackToDestructiveMigration()
                     .addCallback(rcb)
+                    .fallbackToDestructiveMigration()
                     .build();
         }
 

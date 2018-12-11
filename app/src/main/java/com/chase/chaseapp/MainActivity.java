@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationListener;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,8 +26,8 @@ import android.widget.ImageButton;
 import com.chase.chaseapp.map.MapMarkerAdapter;
 
 import com.chase.chaseapp.helper.HelperUtility;
+import com.chase.chaseapp.point.AddPointActivity;
 import com.chase.chaseapp.point.PointActivity;
-import com.chase.chaseapp.point.PointDetailActivity;
 import com.chase.chaseapp.point.PointListActivity;
 import com.chase.chaseapp.team.TeamActivity;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LocationManager mLocationManager;
     private HelperUtility helperUtility;
     private AppDatabase db;
+    private Point point;
 
     private boolean intentHasPointExtra;
     private boolean isFabOpen;
@@ -56,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String locationProvider;
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
-    private static final int ADD_POINT_REQUEST = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,9 +85,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         intentHasPointExtra = getIntent().hasExtra("point");
 
-        if (mMap == null)
-            initMap();
-
         clearMarkersFromMap();
 
         if (intentHasPointExtra) {
@@ -94,8 +92,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             populatePointsThenAddToMap();
         }
-
-        // setupFabMenu(); <-- also called in setup map
     }
 
     @Override
@@ -125,16 +121,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 return db.pointDao().getOne(point.getId());
             }
             @Override
-            protected void onPostExecute(Point point) {
-//                mMap.clear();
+            protected void onPostExecute(Point p) {
+                point = p;
                 addPointToMap(point);
-                moveMapCameraToPoint(point);
+                moveMapCameraToPoint();
             }
         }
         new GetPoint().execute();
     }
 
-    private void moveMapCameraToPoint(Point point) {
+    private void moveMapCameraToPoint() {
         Location location = new Location(locationProvider);
         location.setLatitude(point.getLatitude());
         location.setLongitude(point.getLongitude());
@@ -164,19 +160,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void setMapMarkerOnClick() {
-        mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
-            @Override
-            public void onInfoWindowClick(Marker marker) {
-                if(intentHasPointExtra) {
+        if(intentHasPointExtra) {
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
                     finish();
-                } else {
+                }
+            });
+        } else {
+            mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                @Override
+                public void onInfoWindowClick(Marker marker) {
                     Point point = (Point) marker.getTag();
                     Intent intent = new Intent(MainActivity.this, PointActivity.class);
                     intent.putExtra("point", point);
                     startActivity(intent);
                 }
-            }
-        });
+            });
+        }
     }
 
     private void addPointsToMap(Iterable<Point> points) {
@@ -272,8 +273,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         addFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, PointDetailActivity.class);
-                intent.putExtra("requestCode", ADD_POINT_REQUEST);
+                Intent intent = new Intent(MainActivity.this, AddPointActivity.class);
                 startActivity(intent);
             }
         });
@@ -296,7 +296,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         directionsFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //get directions
+                Uri directionsUri = Uri.parse("google.navigation:q=" + point.getAddress() + "&mode=w");
+                Intent intent = new Intent(Intent.ACTION_VIEW, directionsUri);
+                intent.setPackage("com.google.android.apps.maps");
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
+                }
             }
         });
 
@@ -304,76 +309,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             setPointFabMenuOnClick();
         else
             setMainFabMenuOnClick();
-    }
-
-    private String getLocationProvider() {
-        return locationProvider;
-    }
-
-    private Location getLastKnownLocation() throws SecurityException {
-        return mLocationManager.getLastKnownLocation(getLocationProvider());
-    }
-
-    private String getBestProvider() {
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-
-        return mLocationManager.getBestProvider(criteria, true);
-    }
-
-    private void moveMapCameraToLocation(Location location) {
-        if(location != null)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
-    }
-
-    private boolean grantedLocationPermissions() {
-        if(Build.VERSION.SDK_INT >= 23) {
-            return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED ||
-                    checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
-
-        } else {
-            int gpsPermission = PermissionChecker.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
-            int networkPermission = PermissionChecker.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION);
-            return gpsPermission == PermissionChecker.PERMISSION_GRANTED || networkPermission == PermissionChecker.PERMISSION_GRANTED;
-        }
-    }
-
-    private void requestLocationPermissions() {
-        if(Build.VERSION.SDK_INT >= 23) {
-            requestPermissions(getAcceptableProviders(),
-                    MY_PERMISSIONS_REQUEST_LOCATION);
-        } else {
-            ActivityCompat.requestPermissions(MainActivity.this, getAcceptableProviders(),
-                    MY_PERMISSIONS_REQUEST_LOCATION);
-        }
-    }
-
-    private String[] getAcceptableProviders() {
-        return new String[]{ Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION };
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        boolean anyGranted = false;
-
-        for(String provider : getAcceptableProviders()) {
-            int providerIndex = helperUtility.indexOf(provider, permissions);
-            if(grantResults[providerIndex] == PermissionChecker.PERMISSION_GRANTED) {
-                anyGranted = true;
-                break;
-            }
-        }
-
-        switch(requestCode) {
-            case MY_PERMISSIONS_REQUEST_LOCATION:
-                if(anyGranted)
-                    setupMap();
-                else
-                    helperUtility.showToast("Location permissions required to show your location.");
-                break;
-        }
     }
 
     private void setupMap() throws SecurityException {
@@ -410,22 +345,84 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    @Override
-    public void onProviderEnabled(String s) {
+    private String getLocationProvider() {
+        return locationProvider;
+    }
 
+    private Location getLastKnownLocation() throws SecurityException {
+        return mLocationManager.getLastKnownLocation(getLocationProvider());
+    }
+
+    private String getBestProvider() {
+        Criteria criteria = new Criteria();
+        criteria.setAccuracy(Criteria.ACCURACY_FINE);
+
+        return mLocationManager.getBestProvider(criteria, true);
+    }
+
+    private void moveMapCameraToLocation(Location location) {
+        if(location != null)
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
+    }
+
+    private boolean grantedLocationPermissions() {
+        if(Build.VERSION.SDK_INT >= 23) {
+            return checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        } else {
+            int gpsPermission = PermissionChecker.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
+            return gpsPermission == PermissionChecker.PERMISSION_GRANTED;
+        }
+    }
+
+    private void requestLocationPermissions() {
+        if(Build.VERSION.SDK_INT >= 23) {
+            requestPermissions(getAcceptableProviders(),
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+        } else {
+            ActivityCompat.requestPermissions(MainActivity.this, getAcceptableProviders(),
+                    MY_PERMISSIONS_REQUEST_LOCATION);
+        }
+    }
+
+    private String[] getAcceptableProviders() {
+        return new String[]{ Manifest.permission.ACCESS_FINE_LOCATION};
     }
 
     @Override
-    public void onProviderDisabled(String s) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        boolean anyGranted = false;
+
+        for(String provider : getAcceptableProviders()) {
+            int providerIndex = helperUtility.indexOf(provider, permissions);
+            if(providerIndex == -1)
+                return;
+            if(grantResults[providerIndex] == PermissionChecker.PERMISSION_GRANTED) {
+                anyGranted = true;
+                break;
+            }
+        }
+
+        switch(requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION:
+                if(anyGranted)
+                    setupMap();
+                else
+                    helperUtility.showToast("Location permissions required to show your location.");
+                break;
+        }
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-    }
+    public void onProviderEnabled(String s) { }
 
     @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
+    public void onProviderDisabled(String s) { }
 
-    }
+    @Override
+    public void onLocationChanged(Location location) { }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) { }
 }
