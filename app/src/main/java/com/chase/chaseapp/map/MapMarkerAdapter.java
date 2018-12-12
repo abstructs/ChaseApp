@@ -3,6 +3,7 @@ package com.chase.chaseapp.map;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -23,18 +24,22 @@ public class MapMarkerAdapter implements GoogleMap.InfoWindowAdapter {
     public View getInfoWindow(Marker marker) {
 //        Button details, directions;
         TextView title, address;
+        RatingBar ratingBar;
+
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.map_marker_tooltip, null);
 
         if(marker != null) {
             title = view.findViewById(R.id.titleText);
             address = view.findViewById(R.id.addressText);
+            ratingBar = view.findViewById(R.id.ratingBar);
 
             Point point = (Point) marker.getTag();
 
             if (point != null) {
                 title.setText(point.getTitle());
                 address.setText(point.getAddress());
+                ratingBar.setRating(point.getRating());
             }
 
         }

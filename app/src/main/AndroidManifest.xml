@@ -26,6 +26,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -45,10 +46,10 @@
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity android:name=".MainActivity" />
         <activity android:name=".point.PointActivity" />
         <activity android:name=".point.PointListActivity" />
@@ -61,6 +62,7 @@
         <activity android:name=".team.EditMemberActivity" />
         <activity android:name=".team.MemberActivity" />
         <activity android:name=".map.PlacesActivity" />
+        <activity android:name=".AboutActivity"></activity>
     </application>
 
 </manifest>

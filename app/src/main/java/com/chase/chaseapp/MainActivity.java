@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private boolean intentHasPointExtra;
     private boolean isFabOpen;
-    private ImageButton menuFab, listFab, addFab, teamFab, locationFab, directionsFab;
+    private ImageButton menuFab, listFab, addFab, teamFab, locationFab, directionsFab, infoFab;
 
     private String locationProvider;
 
@@ -261,6 +261,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         teamFab = findViewById(R.id.teamFab);
         locationFab = findViewById(R.id.myLocationFab);
         directionsFab = findViewById(R.id.directionsFab);
+        infoFab = findViewById(R.id.infoFab);
+
+        infoFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AboutActivity.class);
+                startActivity(intent);
+            }
+        });
 
         listFab.setOnClickListener(new View.OnClickListener() {
             @Override
