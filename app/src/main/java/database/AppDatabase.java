@@ -7,8 +7,11 @@ import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.Executors;
 
 import dao.PointDao;
@@ -95,10 +98,27 @@ public abstract class AppDatabase extends RoomDatabase {
         t4.setDescription("Take a picture of the tallest tree around you!");
         t4.setAchieved(false);
 
+        Task t5 = new Task();
+        t5.setTitle("Do 10 pushups");
+        t5.setDescription("Drop to the floor and do 10 pushups!");
+        t5.setAchieved(true);
+
+        Task t6 = new Task();
+        t6.setTitle("Bless you");
+        t6.setDescription("Get a stranger to say \"Bless you\" ");
+        t6.setAchieved(false);
+
         tasks.add(t1);
         tasks.add(t2);
         tasks.add(t3);
         tasks.add(t4);
+        tasks.add(t5);
+        tasks.add(t6);
+
+        for(Task task : tasks) {
+            Random rand = new Random();
+            task.setPointId(rand.nextInt(4) + 1);
+        }
 
         return tasks;
     }
@@ -156,10 +176,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             Executors.newSingleThreadExecutor().execute(new Runnable() {
                                 @Override
                                 public void run() {
-                                    for(int i = 0; i < points.size(); i++) {
-                                        long pointId = INSTANCE.pointDao().insertOne(points.get(i));
-                                        Task task = tasks.get(i);
-                                        task.setId(pointId);
+                                    for(Point point : points) {
+                                        INSTANCE.pointDao().insertOne(point);
                                     }
 
                                     for(Task task : tasks) {
