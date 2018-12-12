@@ -66,7 +66,10 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginTop="20dp"
                 android:layout_marginRight="20dp"
-                android:entries="@array/tags_array" />
+                android:entries="@array/tags_array"
+                android:divider="@color/colorPrimaryLight"
+                android:dividerHeight="2px"/>
+
         </LinearLayout>
 
         <LinearLayout
