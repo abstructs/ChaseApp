@@ -45,26 +45,16 @@ import java.util.ArrayList;
 import database.AppDatabase;
 import entities.Point;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback { //, GoogleMap.OnMyLocationClickListener, GoogleMap.OnMyLocationButtonClickListener, LocationListener /*, LocationListener, ActivityCompat.OnRequestPermissionsResultCallback*/ {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private LocationManager mLocationManager;
+    private Location defaultLocation;
     private HelperUtility helperUtility;
     private AppDatabase db;
-//    private Point point;
-    private SupportMapFragment mapFragment;
-
-
-
     private FusedLocationProviderClient mFusedLocationClient;
 
-
-    private boolean intentHasPointExtra;
-    private boolean isFabOpen;
     private ImageButton menuFab, listFab, addFab, teamFab, locationFab, directionsFab, infoFab;
-    private View googleLocationButton;
-
-    private String locationProvider;
+    private boolean isFabOpen;
 
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
 
@@ -78,32 +68,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         db = AppDatabase.getAppDatabase(getApplicationContext());
         helperUtility = new HelperUtility(getApplicationContext());
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+
+        defaultLocation = new Location("");
+        defaultLocation.setLatitude(43.675321);
+        defaultLocation.setLongitude(-79.410067);
     }
 
     private void initMap() {
-        mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(MainActivity.this);
-
-        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-//        intentHasPointExtra = getIntent().hasExtra("point");
-//
-//        clearMarkersFromMap();
-//
-//        if (intentHasPointExtra) {
-////            getPointThenAddToMap();
-//            Point point = getIntent().getParcelableExtra("point");
-//            addPointToMapAndShowInfoWindow(point);
-//        } else {
-//            populatePointsThenAddToMap();
-//        }
     }
 
     @Override
@@ -344,6 +319,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 if(location != null) {
                     animateMapCameraToLocation(task.getResult());
+                } else {
+                    moveMapCameraToLocation(defaultLocation);
                 }
             }
         });
@@ -448,14 +425,4 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         setMapMarkerOnClick();
     }
-
-//    @Override
-//    public void onProviderEnabled(String s) {
-//
-//    }
-//
-//    @Override
-//    public void onProviderDisabled(String s) {
-//
-//    }
 }

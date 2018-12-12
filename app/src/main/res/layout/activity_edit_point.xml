@@ -44,7 +44,7 @@
                 android:layout_marginRight="20dp"
                 android:ems="10"
                 android:hint="Enter a name"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName|textCapWords" />
 
             <EditText
                 android:id="@+id/addressInput"
@@ -55,7 +55,7 @@
                 android:layout_marginRight="20dp"
                 android:ems="10"
                 android:hint="Enter a address"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName|textCapWords" />
 
             <Spinner
                 android:id="@+id/tagSpinner"

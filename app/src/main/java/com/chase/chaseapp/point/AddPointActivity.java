@@ -44,6 +44,7 @@ public class AddPointActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     if(formIsValid()) {
+                        saveBtn.setEnabled(false);
                         savePointThenFinish(getPoint());
                     }
                     else
@@ -55,7 +56,6 @@ public class AddPointActivity extends AppCompatActivity {
         });
     }
 
-    // TODO: potentially let the user choose which location they want
     private LatLng getLocationFromAddress(String strAddress) throws IOException {
         Geocoder geocoder = new Geocoder(AddPointActivity.this);
         List<Address> addresses = geocoder.getFromLocationName(strAddress, maxAddressResults);
