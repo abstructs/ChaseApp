@@ -44,7 +44,6 @@ public class AddPointActivity extends AppCompatActivity {
             public void onClick(View v) {
                 try {
                     if(formIsValid()) {
-                        saveBtn.setEnabled(false);
                         savePointThenFinish(getPoint());
                     }
                     else
