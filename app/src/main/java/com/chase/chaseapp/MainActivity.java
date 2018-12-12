@@ -3,14 +3,12 @@ package com.chase.chaseapp;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationListener;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -47,13 +45,13 @@ import java.util.ArrayList;
 import database.AppDatabase;
 import entities.Point;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationClickListener, GoogleMap.OnMyLocationButtonClickListener, LocationListener /*, LocationListener, ActivityCompat.OnRequestPermissionsResultCallback*/ {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback { //, GoogleMap.OnMyLocationClickListener, GoogleMap.OnMyLocationButtonClickListener, LocationListener /*, LocationListener, ActivityCompat.OnRequestPermissionsResultCallback*/ {
 
     private GoogleMap mMap;
     private LocationManager mLocationManager;
     private HelperUtility helperUtility;
     private AppDatabase db;
-    private Point point;
+//    private Point point;
     private SupportMapFragment mapFragment;
 
 
@@ -95,15 +93,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onResume() {
         super.onResume();
 
-        intentHasPointExtra = getIntent().hasExtra("point");
-
-        clearMarkersFromMap();
-
-        if (intentHasPointExtra) {
-            getPointThenAddToMap();
-        } else {
-            populatePointsThenAddToMap();
-        }
+//        intentHasPointExtra = getIntent().hasExtra("point");
+//
+//        clearMarkersFromMap();
+//
+//        if (intentHasPointExtra) {
+////            getPointThenAddToMap();
+//            Point point = getIntent().getParcelableExtra("point");
+//            addPointToMapAndShowInfoWindow(point);
+//        } else {
+//            populatePointsThenAddToMap();
+//        }
     }
 
     @Override
@@ -114,39 +114,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             menuFab.performClick();
     }
 
-    private void addPointToMap(Point point) {
+    private Marker addPointToMap(Point point) {
         if(point != null) {
             LatLng markerLocation = new LatLng(point.getLatitude(), point.getLongitude());
-            mMap.addMarker(
+            Marker marker = mMap.addMarker(
                     new MarkerOptions()
                             .position(markerLocation)
-                            .title(point.getTitle()))
-                    .setTag(point);
+                            .title(point.getTitle()));
+            marker.setTag(point);
+            return marker;
         }
+
+        return null;
     }
 
-    private void getPointThenAddToMap() {
+    private void getPointThenAddToMap(final Point point) {
         class GetPoint extends AsyncTask<Void, Void, Point> {
             @Override
             protected Point doInBackground(Void... params) {
-                Point point = getIntent().getParcelableExtra("point");
                 return db.pointDao().getOne(point.getId());
             }
             @Override
             protected void onPostExecute(Point p) {
-                point = p;
-                addPointToMap(point);
-                moveMapCameraToPoint();
+                Location location = new Location("");
+                location.setLatitude(p.getLatitude());
+                location.setLongitude(p.getLongitude());
+
+                moveMapCameraToLocation(location);
+                addPointToMap(p).showInfoWindow();
             }
         }
         new GetPoint().execute();
-    }
-
-    private void moveMapCameraToPoint() {
-        Location location = new Location(locationProvider);
-        location.setLatitude(point.getLatitude());
-        location.setLongitude(point.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
     }
 
     private void clearMarkersFromMap() {
@@ -172,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void setMapMarkerOnClick() {
-        if(intentHasPointExtra) {
+        if(getIntent().hasExtra("point")) {
             mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
                 @Override
                 public void onInfoWindowClick(Marker marker) {
@@ -310,69 +308,45 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         directionsFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Uri directionsUri = Uri.parse("google.navigation:q=" + point.getAddress() + "&mode=w");
-                Intent intent = new Intent(Intent.ACTION_VIEW, directionsUri);
-                intent.setPackage("com.google.android.apps.maps");
-                if (intent.resolveActivity(getPackageManager()) != null) {
-                    startActivity(intent);
+                Point point = getPointFromIntent();
+                if(point != null) {
+                    Uri directionsUri = Uri.parse("google.navigation:q=" + point.getAddress() + "&mode=w");
+                    Intent intent = new Intent(Intent.ACTION_VIEW, directionsUri);
+                    intent.setPackage("com.google.android.apps.maps");
+                    if (intent.resolveActivity(getPackageManager()) != null)
+                        startActivity(intent);
                 }
             }
         });
 
-        setupMyLocationBtn();
+        locationFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                goToMyLocation();
+            }
+        });
 
-        if(intentHasPointExtra)
+        if(getIntent().hasExtra("point"))
             setPointFabMenuOnClick();
         else
             setMainFabMenuOnClick();
     }
 
-    private void setupMyLocationBtn() {
-        googleLocationButton = ((View)mapFragment.getView().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-        locationFab = findViewById(R.id.myLocationFab);
-
-        if(googleLocationButton != null)
-            googleLocationButton.setVisibility(View.GONE);
-
-        locationFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                googleLocationButton.callOnClick();
-//                goToMyLocation();
-            }
-        });
+    private Point getPointFromIntent() {
+        return getIntent().getParcelableExtra("point");
     }
 
     private void goToMyLocation() {
-//        googleLocationButton.callOnClick();
-        locationFab.callOnClick();
-    }
-
-    private void setupMap() throws SecurityException {
-        mMap.setMyLocationEnabled(true);
-        mMap.setInfoWindowAdapter(new MapMarkerAdapter(MainActivity.this));
-        mMap.getUiSettings().setMapToolbarEnabled(false);
-
-
-//        locationProvider = getBestProvider();
-
-        if(intentHasPointExtra)
-            getPointThenAddToMap();
-        else
-            populatePointsThenAddToMap();
-
-        setupFabMenu();
-
-        setMapMarkerOnClick();
-
         getLastKnownLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
             @Override
             public void onComplete(@NonNull Task<Location> task) {
-                moveMapCameraToLocation(task.getResult());
+                Location location = task.getResult();
+
+                if(location != null) {
+                    animateMapCameraToLocation(task.getResult());
+                }
             }
         });
-
-//        goToMyLocation();
     }
 
     @Override
@@ -389,25 +363,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    private String getLocationProvider() {
-        return locationProvider;
-    }
-
     private Task<Location> getLastKnownLocation() throws SecurityException {
-//        return mLocationManager.getLastKnownLocation(getLocationProvider());
         return mFusedLocationClient.getLastLocation();
     }
 
-    private String getBestProvider() {
-        Criteria criteria = new Criteria();
-        criteria.setAccuracy(Criteria.ACCURACY_FINE);
-
-        return mLocationManager.getBestProvider(criteria, true);
+    private void animateMapCameraToLocation(Location location) {
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
     }
 
     private void moveMapCameraToLocation(Location location) {
-        if(location != null)
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15f));
     }
 
     private boolean grantedLocationPermissions() {
@@ -451,44 +416,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         switch(requestCode) {
             case MY_PERMISSIONS_REQUEST_LOCATION:
-                if(anyGranted)
+                if(anyGranted) {
                     setupMap();
+                    goToMyLocation();
+                }
                 else
                     helperUtility.showToast("Location permissions required to show your location.");
                 break;
         }
     }
 
-    @Override
-    public boolean onMyLocationButtonClick() {
-        System.out.println("my location button clicked");
-        return false;
+    private void setupMap() throws SecurityException {
+        mMap.setMyLocationEnabled(true);
+        mMap.setInfoWindowAdapter(new MapMarkerAdapter(MainActivity.this));
+        mMap.getUiSettings().setMapToolbarEnabled(false);
+        mMap.getUiSettings().setMyLocationButtonEnabled(false);
+
+        clearMarkersFromMap();
+
+        if (getIntent().hasExtra("point")) {
+            Point point = getPointFromIntent();
+
+            getPointThenAddToMap(point);
+
+        } else {
+            populatePointsThenAddToMap();
+            goToMyLocation();
+        }
+
+        setupFabMenu();
+
+        setMapMarkerOnClick();
     }
 
-    @Override
-    public void onMyLocationClick(@NonNull Location location) {
-
-    }
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        System.out.println("location changed called");
-        moveMapCameraToLocation(location);
-    }
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String s) {
-
-    }
+//    @Override
+//    public void onProviderEnabled(String s) {
+//
+//    }
+//
+//    @Override
+//    public void onProviderDisabled(String s) {
+//
+//    }
 }
