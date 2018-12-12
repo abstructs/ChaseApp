@@ -30,6 +30,8 @@ import com.chase.chaseapp.point.AddPointActivity;
 import com.chase.chaseapp.point.PointActivity;
 import com.chase.chaseapp.point.PointListActivity;
 import com.chase.chaseapp.team.TeamActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,23 +39,32 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
 import database.AppDatabase;
 import entities.Point;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener, ActivityCompat.OnRequestPermissionsResultCallback {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationClickListener, GoogleMap.OnMyLocationButtonClickListener, LocationListener /*, LocationListener, ActivityCompat.OnRequestPermissionsResultCallback*/ {
 
     private GoogleMap mMap;
     private LocationManager mLocationManager;
     private HelperUtility helperUtility;
     private AppDatabase db;
     private Point point;
+    private SupportMapFragment mapFragment;
+
+
+
+    private FusedLocationProviderClient mFusedLocationClient;
+
 
     private boolean intentHasPointExtra;
     private boolean isFabOpen;
     private ImageButton menuFab, listFab, addFab, teamFab, locationFab, directionsFab, infoFab;
+    private View googleLocationButton;
 
     private String locationProvider;
 
@@ -68,10 +79,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         db = AppDatabase.getAppDatabase(getApplicationContext());
         helperUtility = new HelperUtility(getApplicationContext());
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
     }
 
     private void initMap() {
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
         mapFragment.getMapAsync(MainActivity.this);
@@ -295,13 +307,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        locationFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                moveMapCameraToLocation(getLastKnownLocation());
-            }
-        });
-
         directionsFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -314,19 +319,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
+        setupMyLocationBtn();
+
         if(intentHasPointExtra)
             setPointFabMenuOnClick();
         else
             setMainFabMenuOnClick();
     }
 
+    private void setupMyLocationBtn() {
+        googleLocationButton = ((View)mapFragment.getView().findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        locationFab = findViewById(R.id.myLocationFab);
+
+        if(googleLocationButton != null)
+            googleLocationButton.setVisibility(View.GONE);
+
+        locationFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                googleLocationButton.callOnClick();
+//                goToMyLocation();
+            }
+        });
+    }
+
+    private void goToMyLocation() {
+//        googleLocationButton.callOnClick();
+        locationFab.callOnClick();
+    }
+
     private void setupMap() throws SecurityException {
         mMap.setMyLocationEnabled(true);
         mMap.setInfoWindowAdapter(new MapMarkerAdapter(MainActivity.this));
-        mMap.getUiSettings().setMyLocationButtonEnabled(false);
         mMap.getUiSettings().setMapToolbarEnabled(false);
 
-        locationProvider = getBestProvider();
+
+//        locationProvider = getBestProvider();
 
         if(intentHasPointExtra)
             getPointThenAddToMap();
@@ -337,7 +365,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         setMapMarkerOnClick();
 
-        moveMapCameraToLocation(getLastKnownLocation());
+        getLastKnownLocation().addOnCompleteListener(new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                moveMapCameraToLocation(task.getResult());
+            }
+        });
+
+//        goToMyLocation();
     }
 
     @Override
@@ -358,8 +393,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return locationProvider;
     }
 
-    private Location getLastKnownLocation() throws SecurityException {
-        return mLocationManager.getLastKnownLocation(getLocationProvider());
+    private Task<Location> getLastKnownLocation() throws SecurityException {
+//        return mLocationManager.getLastKnownLocation(getLocationProvider());
+        return mFusedLocationClient.getLastLocation();
     }
 
     private String getBestProvider() {
@@ -424,14 +460,35 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onProviderEnabled(String s) { }
+    public boolean onMyLocationButtonClick() {
+        System.out.println("my location button clicked");
+        return false;
+    }
 
     @Override
-    public void onProviderDisabled(String s) { }
+    public void onMyLocationClick(@NonNull Location location) {
+
+    }
+
 
     @Override
-    public void onLocationChanged(Location location) { }
+    public void onLocationChanged(Location location) {
+        System.out.println("location changed called");
+        moveMapCameraToLocation(location);
+    }
 
     @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) { }
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
 }
